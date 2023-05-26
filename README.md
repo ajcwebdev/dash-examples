@@ -5,8 +5,8 @@ https://github.com/dashpay/platform/tree/master/packages/js-dash-sdk/docs
 ## Clone Repo and Navigate to Project
 
 ```bash
-git clone https://github.com/ajcwebdev/a-first-look.git
-cd web3/dash
+git clone https://github.com/ajcwebdev/dash-examples.git
+cd dash-examples
 ```
 
 ## Install Project Dependencies
