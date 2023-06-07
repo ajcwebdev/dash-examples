@@ -1,6 +1,39 @@
 # A First Look at Dash
 
-https://github.com/dashpay/platform/tree/master/packages/js-dash-sdk/docs
+## Outline
+
+- [API and Scripts](#api-and-scripts)
+- [Examples](#examples)
+  - [No Framework](#no-framework)
+  - [Frameworks](#frameworks)
+- [Clone Repo and Navigate to Project](#clone-repo-and-navigate-to-project)
+- [Install Project Dependencies](#install-project-dependencies)
+- [Set Environment Variables](#set-environment-variables)
+- [Start Development Server](#start-development-server)
+- [Dash Resources](#dash-resources)
+
+## API and Scripts
+
+- [API](https://github.com/ajcwebdev/dash-examples/tree/main/api)
+- [Scripts](https://github.com/ajcwebdev/dash-examples/tree/main/scripts)
+
+## Examples
+
+### No Framework
+
+- [JavaScript](https://github.com/ajcwebdev/dash-examples/tree/main/javascript)
+- [TypeScript](https://github.com/ajcwebdev/dash-examples/tree/main/typescript)
+
+### Frameworks
+
+- [Alpine](https://github.com/ajcwebdev/dash-examples/tree/main/alpine)
+- [Angular](https://github.com/ajcwebdev/dash-examples/tree/main/angular)
+- [Lit](https://github.com/ajcwebdev/dash-examples/tree/main/lit)
+- [Preact](https://github.com/ajcwebdev/dash-examples/tree/main/preact)
+- [React](https://github.com/ajcwebdev/dash-examples/tree/main/react)
+- [Solid](https://github.com/ajcwebdev/dash-examples/tree/main/solid)
+- [Svelte](https://github.com/ajcwebdev/dash-examples/tree/main/svelte)
+- [Vue](https://github.com/ajcwebdev/dash-examples/tree/main/vue)
 
 ## Clone Repo and Navigate to Project
 
@@ -13,6 +46,8 @@ cd dash-examples
 
 ```bash
 pnpm i
+# npm i
+# yarn
 ```
 
 ## Set Environment Variables
@@ -25,6 +60,8 @@ If you don't already have one, create a wallet:
 
 ```bash
 pnpm createWallet
+# npm run createWallet
+# yarn createWallet
 ```
 
 Copy `WALLET_ADDRESS` and `MNEMONIC` and paste them into `.env`.
@@ -38,3 +75,7 @@ pnpm serve
 ```bash
 curl "http://localhost:3001/name/ajcwebdevtest"
 ```
+
+## Dash Resources
+
+[Dash SDK](https://github.com/dashpay/platform/tree/master/packages/js-dash-sdk/docs)
