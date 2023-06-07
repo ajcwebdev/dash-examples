@@ -1,4 +1,17 @@
+# Dash TypeScript Example
+
+## Clone Repo and Navigate to Project Directory
+
+```bash
+git clone https://github.com/ajcwebdev/dash-examples.git
+cd dash-examples/typescript
+```
+
+## Dash Domain Name Component
+
 ```ts
+// src/main.ts
+
 interface Data {
   name: string
   age: number

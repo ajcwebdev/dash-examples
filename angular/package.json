@@ -1,7 +1,5 @@
 {
   "name": "angular-analog",
-  "version": "0.0.0",
-  "private": true,
   "engines": {
     "node": ">=16.0.0"
   },

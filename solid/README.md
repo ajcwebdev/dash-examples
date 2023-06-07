@@ -1,39 +1,17 @@
-## Usage
+# Dash Solid Example
 
-Those templates dependencies are maintained via [pnpm](https://pnpm.io) via `pnpm up -Lri`.
-
-This is the reason you see a `pnpm-lock.yaml`. That being said, any package manager will work. This file can be safely be removed once you clone a template.
+## Clone Repo and Navigate to Project Directory
 
 ```bash
-$ npm install # or pnpm install or yarn install
+git clone https://github.com/ajcwebdev/dash-examples.git
+cd dash-examples/solid
 ```
 
-### Learn more on the [Solid Website](https://solidjs.com) and come chat with us on our [Discord](https://discord.com/invite/solidjs)
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm dev` or `npm start`
-
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.<br>
-
-### `npm run build`
-
-Builds the app for production to the `dist` folder.<br>
-It correctly bundles Solid in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-## Deployment
-
-You can deploy the `dist` folder to any static host provider (netlify, surge, now, etc.)
+## Dash Domain Name Component
 
 ```jsx
+// src/App.jsx
+
 import { createSignal, onCleanup } from "solid-js"
 
 function App() {
@@ -41,9 +19,11 @@ function App() {
   const [triggerFetch, setTriggerFetch] = createSignal(false)
   const [isLoading, setIsLoading] = createSignal(false)
 
+  const URL = "http://localhost:3001/name/ajcwebdevtest"
+
   const fetchData = () => {
     setIsLoading(true)
-    fetch("http://localhost:3001/name/ajcwebdevtest")
+    fetch(URL)
       .then((response) => response.json())
       .then((data) => {
         setBlockchainData(data)
@@ -68,7 +48,8 @@ function App() {
         <pre className="preLeft">
           {isLoading()
             ? "Loading..."
-            : JSON.stringify(blockchainData(), null, 2)}
+            : JSON.stringify(blockchainData(), null, 2)
+          }
         </pre>
       </p>
     </>

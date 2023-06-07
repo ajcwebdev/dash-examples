@@ -1,27 +1,13 @@
-# Analog App
+# Dash Analog Example
 
-This project was generated with [Analog](https://analogjs.org), the fullstack meta-framework for Angular.
-
-## Setup
+## Clone Repo and Navigate to Project Directory
 
 ```bash
-npm i
-npm start
+git clone https://github.com/ajcwebdev/dash-examples.git
+cd dash-examples/analog
 ```
 
-- Run `npm install` to install the application dependencies.
-- Run `npm start` for a dev server. Navigate to `http://localhost:5173/`. The application automatically reloads if you change any of the source files.
-- Run `npm run build` to build the client/server project. The client build artifacts are located in the `dist/analog/public` directory. The server for the API build artifacts are located in the `dist/analog/server` directory.
-
-```bash
-curl "http://localhost:5173/api/v1/hello"
-```
-
-```json
-{
-  "message": "Hello World"
-}
-```
+## Dash Domain Name Component
 
 ```ts
 // src/app/pages/index.page.ts

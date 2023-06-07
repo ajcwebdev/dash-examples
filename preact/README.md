@@ -1,3 +1,16 @@
+# Dash Preact Example
+
+[Preact](https://preactjs.com/) is a fast, lightweight JavaScript library that is very similar to React. It's designed to be a minimal implementation of the core features of React with a focus on performance and size.
+
+## Clone Repo and Navigate to Project Directory
+
+```bash
+git clone https://github.com/ajcwebdev/dash-examples.git
+cd dash-examples/preact
+```
+
+## Dash Domain Name Component
+
 ```jsx
 import { h } from 'preact'
 import { useEffect, useState } from 'preact/hooks'

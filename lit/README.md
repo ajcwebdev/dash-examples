@@ -1,3 +1,20 @@
+# Dash Lit Example
+
+[LitHTML](https://lit.dev/) is a lightweight, modern, and efficient JavaScript library for building web components and templates. It was developed by the Polymer Project team at Google.
+
+The main selling point of `lit-html` is its use of JavaScript tagged template literals to create HTML templates. Since the templates are JavaScript, you can use features like variables, functions, and modules.
+
+[Lit docs](https://lit.dev/docs/libraries/standalone-templates/)
+
+## Clone Repo and Navigate to Project Directory
+
+```bash
+git clone https://github.com/ajcwebdev/dash-examples.git
+cd dash-examples/lit
+```
+
+## Dash Domain Name Component
+
 ```js
 import { LitElement, html, css } from 'lit'
 import { property, state } from 'lit/decorators.js'

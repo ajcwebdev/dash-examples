@@ -1,18 +1,78 @@
-# Vue 3 + Vite
+# Dash Vue Example
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+## Clone Repo and Navigate to Project Directory
 
-## Recommended IDE Setup
+```bash
+git clone https://github.com/ajcwebdev/dash-examples.git
+cd dash-examples/vue
+```
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+## Dash Domain Name Component
 
-```js
-// vite.config.js
+```html
+<template>
+  <div>
+    <HelloWorld msg="Vite + Vue" />
+    <h1>Dash + Vue + Express</h1>
+    <button @click="triggerFetch = true">Fetch Data</button>
+    <p class="alignLeft">
+      <pre class="preLeft">
+        {{ isLoading ? 'Loading...' : JSON.stringify(blockchainData, null, 2) }}
+      </pre>
+    </p>
+  </div>
+</template>
 
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
+<script>
+  import { ref, watch } from 'vue'
 
-export default defineConfig({
-  plugins: [vue()],
-})
+  const URL = "http://localhost:3001/name/ajcwebdevtest"
+
+  export default {
+    setup() {
+      const blockchainData = ref(null)
+      const triggerFetch = ref(false)
+      const isLoading = ref(false)
+
+      const fetchData = () => {
+        isLoading.value = true
+        fetch(URL)
+          .then(response => response.json())
+          .then(data => {
+            blockchainData.value = data
+            isLoading.value = false
+          })
+      }
+      watch(triggerFetch, (newVal) => {
+        if (newVal) {
+          fetchData()
+          triggerFetch.value = false
+        }
+      })
+      return { blockchainData, triggerFetch, isLoading }
+    }
+  }
+</script>
+
+<style scoped>
+  .logo {
+    height: 6em;
+    padding: 1.5em;
+    will-change: filter;
+    transition: filter 300ms;
+  }
+  .logo:hover {
+    filter: drop-shadow(0 0 2em #646cffaa);
+  }
+  .logo.vue:hover {
+    filter: drop-shadow(0 0 2em #42b883aa);
+  }
+  .alignLeft {
+    display: flex;
+    justify-content: flex-start;
+  }
+  .preLeft {
+    text-align: left;
+  }
+</style>
 ```

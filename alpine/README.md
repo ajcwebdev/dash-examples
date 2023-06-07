@@ -1,3 +1,16 @@
+# Dash Alpine Example
+
+[Alpine.js](https://alpinejs.dev/) is a relatively small JavaScript framework created by Caleb Porzio that allows you to build modern, interactive web interfaces. It aims to cover the majority of client-side functionality you would get from a framework like Vue or React, but without the need for a build step or package management. This means it can be used directly in the browser with a script tag.
+
+## Clone Repo and Navigate to Project Directory
+
+```bash
+git clone https://github.com/ajcwebdev/dash-examples.git
+cd dash-examples/alpine
+```
+
+## Dash Domain Name Component
+
 ```js
 <head>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.12.1/dist/cdn.min.js"></script>

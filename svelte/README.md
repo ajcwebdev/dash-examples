@@ -1,47 +1,80 @@
-# Svelte + Vite
+# Dash Svelte Example
 
-This template should help get you started developing with Svelte in Vite.
+## Clone Repo and Navigate to Project Directory
 
-## Recommended IDE Setup
+```bash
+git clone https://github.com/ajcwebdev/dash-examples.git
+cd dash-examples/svelte
+```
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
+## Dash Domain Name Component
 
-## Need an official Svelte framework?
+```html
+<script>
+  import { onMount } from 'svelte'
+  let blockchainData
+  let triggerFetch = false
+  let isLoading = false
 
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
+  const fetchData = async () => {
+    isLoading = true // Set loading to true when fetch begins
+    const response = await fetch('http://localhost:3001/name/ajcwebdevtest')
+    const data = await response.json()
+    blockchainData = data
+    isLoading = false // Set loading to false when fetch completes
+  }
 
-## Technical considerations
+  onMount(() => {
+    if (triggerFetch) {
+      fetchData()
+      triggerFetch = false // Reset trigger
+    }
+  })
 
-**Why use this over SvelteKit?**
+  function handleClick() {
+    triggerFetch = true
+    fetchData()
+  }
+</script>
 
-- It brings its own routing solution which might not be preferable for some users.
-- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
+<main>
+  <h1>Dash + Svelte + Express</h1>
+  <button on:click={handleClick}>
+    Fetch Data
+  </button>
+  <pre class="alignLeft">
+    <p class="preLeft">
+      {isLoading
+        ? 'Loading...'
+        : JSON.stringify(blockchainData, null, 2)
+      }
+    </p>
+  </pre>
+</main>
 
-This template contains as little as possible to get started with Vite + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
+<style>
+  .alignLeft {
+    display: flex;
+    justify-content: flex-start;
+  }
 
-Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
-
-**Why `global.d.ts` instead of `compilerOptions.types` inside `jsconfig.json` or `tsconfig.json`?**
-
-Setting `compilerOptions.types` shuts out all other types not explicitly listed in the configuration. Using triple-slash references keeps the default TypeScript setting of accepting type information from the entire workspace, while also adding `svelte` and `vite/client` type information.
-
-**Why include `.vscode/extensions.json`?**
-
-Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
-
-**Why enable `checkJs` in the JS template?**
-
-It is likely that most cases of changing variable types in runtime are likely to be accidental, rather than deliberate. This provides advanced typechecking out of the box. Should you like to take advantage of the dynamically-typed nature of JavaScript, it is trivial to change the configuration.
-
-**Why is HMR not preserving my local component state?**
-
-HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/sveltejs/svelte-hmr/tree/master/packages/svelte-hmr#preservation-of-local-state).
-
-If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
-
-```js
-// store.js
-// An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
+  .preLeft {
+    text-align: left;
+  }
+  .logo {
+    height: 6em;
+    padding: 1.5em;
+    will-change: filter;
+    transition: filter 300ms;
+  }
+  .logo:hover {
+    filter: drop-shadow(0 0 2em #646cffaa);
+  }
+  .logo.svelte:hover {
+    filter: drop-shadow(0 0 2em #ff3e00aa);
+  }
+  .read-the-docs {
+    color: #888;
+  }
+</style>
 ```
