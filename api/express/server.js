@@ -1,6 +1,6 @@
 import express from 'express'
 import cors from 'cors'
-import { client } from '../scripts/client.js'
+import { client } from '../client.js'
 
 const app = express()
 app.use(cors())

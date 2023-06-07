@@ -1,33 +1,42 @@
-import { useState } from 'preact/hooks'
-import preactLogo from './assets/preact.svg'
-import viteLogo from '/vite.svg'
-import './app.css'
+import { useEffect, useState } from 'preact/hooks'
+import './index.css'
 
 export function App() {
-  const [count, setCount] = useState(0)
+  const [blockchainData, setBlockchainData] = useState()
+  const [triggerFetch, setTriggerFetch] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const fetchData = () => {
+    setIsLoading(true)
+    fetch('http://localhost:3001/name/ajcwebdevtest')
+      .then(response => response.json())
+      .then(data => {
+        setBlockchainData(data)
+        setIsLoading(false)
+      })
+  }
+
+  useEffect(() => {
+    if (triggerFetch) {
+      fetchData()
+      setTriggerFetch(false)
+    }
+  }, [triggerFetch])
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} class="logo" alt="Vite logo" />
-        </a>
-        <a href="https://preactjs.com" target="_blank">
-          <img src={preactLogo} class="logo preact" alt="Preact logo" />
-        </a>
-      </div>
-      <h1>Vite + Preact</h1>
-      <div class="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/app.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p class="read-the-docs">
-        Click on the Vite and Preact logos to learn more
+    <div>
+      <h1>Dash + Preact + Express</h1>
+      <button onClick={() => setTriggerFetch(true)}>
+        Fetch Data
+      </button>
+      <p class="leftCenter">
+        <pre class="preLeft">
+          {isLoading
+            ? 'Loading...'
+            : JSON.stringify(blockchainData, null, 2)
+          }
+        </pre>
       </p>
-    </>
+    </div>
   )
 }

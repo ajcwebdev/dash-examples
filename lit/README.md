@@ -13,6 +13,13 @@ git clone https://github.com/ajcwebdev/dash-examples.git
 cd dash-examples/lit
 ```
 
+## Install Dependencies and Start Development Server
+
+```bash
+pnpm i
+pnpm dev
+```
+
 ## Dash Domain Name Component
 
 ```js

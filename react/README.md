@@ -7,6 +7,13 @@ git clone https://github.com/ajcwebdev/dash-examples.git
 cd dash-examples/react
 ```
 
+## Install Dependencies and Start Development Server
+
+```bash
+pnpm i
+pnpm dev
+```
+
 ## Dash Domain Name Component
 
 ```jsx
