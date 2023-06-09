@@ -17,16 +17,9 @@
 - [API](https://github.com/ajcwebdev/dash-examples/tree/main/api)
 - [Scripts](https://github.com/ajcwebdev/dash-examples/tree/main/scripts)
 
-## Examples
+## Example Projects
 
-### No Framework
-
-- [JavaScript](https://github.com/ajcwebdev/dash-examples/tree/main/javascript)
-- [TypeScript](https://github.com/ajcwebdev/dash-examples/tree/main/typescript)
-
-### Frameworks
-
-- [Alpine](https://github.com/ajcwebdev/dash-examples/tree/main/alpine)
+- [Vanilla JavaScript](https://github.com/ajcwebdev/dash-examples/tree/main/javascript)
 - [Angular](https://github.com/ajcwebdev/dash-examples/tree/main/angular)
 - [Lit](https://github.com/ajcwebdev/dash-examples/tree/main/lit)
 - [Preact](https://github.com/ajcwebdev/dash-examples/tree/main/preact)
