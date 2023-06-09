@@ -1,5 +1,7 @@
 # Dash Solid Example
 
+- **Note: Fix CSS to display JSON.**
+
 ## Clone Repo and Navigate to Project Directory
 
 ```bash

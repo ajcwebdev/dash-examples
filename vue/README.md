@@ -1,5 +1,8 @@
 # Dash Vue Example
 
+- **Note: Fix `null` displaying at first component render.**
+- **Note: Fix CSS to display JSON.**
+
 ## Clone Repo and Navigate to Project Directory
 
 ```bash

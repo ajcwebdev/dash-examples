@@ -1,5 +1,8 @@
 # Dash Svelte Example
 
+- **Note: Fix `undefined` displaying at first component render.**
+- **Note: Fix CSS to display JSON.**
+
 ## Clone Repo and Navigate to Project Directory
 
 ```bash
