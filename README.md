@@ -2,22 +2,24 @@
 
 ## Outline
 
-- [API and Scripts](#api-and-scripts)
-- [Examples](#examples)
-  - [No Framework](#no-framework)
-  - [Frameworks](#frameworks)
-- [Clone Repo and Navigate to Project](#clone-repo-and-navigate-to-project)
-- [Install Project Dependencies](#install-project-dependencies)
-- [Set Environment Variables](#set-environment-variables)
-- [Start Development Server](#start-development-server)
+- [Project Structure](#project-structure)
+  - [APIs and Scripts](#apis-and-scripts)
+  - [Frontend Example Apps](#frontend-example-apps)
+- [Setup](#setup)
+  - [Clone Repo and Navigate to Project](#clone-repo-and-navigate-to-project)
+  - [Install Project Dependencies](#install-project-dependencies)
+  - [Set Environment Variables](#set-environment-variables)
+  - [Start Development Server](#start-development-server)
 - [Dash Resources](#dash-resources)
 
-## API and Scripts
+## Project Structure
+
+### APIs and Scripts
 
 - [API](https://github.com/ajcwebdev/dash-examples/tree/main/api)
 - [Scripts](https://github.com/ajcwebdev/dash-examples/tree/main/scripts)
 
-## Example Projects
+### Frontend Example Apps
 
 - [Vanilla JavaScript](https://github.com/ajcwebdev/dash-examples/tree/main/javascript)
 - [Angular](https://github.com/ajcwebdev/dash-examples/tree/main/angular)
@@ -35,7 +37,7 @@ git clone https://github.com/ajcwebdev/dash-examples.git
 cd dash-examples
 ```
 
-## Install Project Dependencies
+### Install Project Dependencies
 
 ```bash
 pnpm i
@@ -43,7 +45,7 @@ pnpm i
 # yarn
 ```
 
-## Set Environment Variables
+### Set Environment Variables
 
 ```bash
 cp .env.example .env
@@ -59,7 +61,7 @@ pnpm createWallet
 
 Copy `WALLET_ADDRESS` and `MNEMONIC` and paste them into `.env`.
 
-## Start Development Server
+### Start Development Server
 
 ```bash
 pnpm serve
