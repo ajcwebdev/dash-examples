@@ -30,7 +30,9 @@
 - [Svelte](https://github.com/ajcwebdev/dash-examples/tree/main/svelte)
 - [Vue](https://github.com/ajcwebdev/dash-examples/tree/main/vue)
 
-## Clone Repo and Navigate to Project
+## Setup
+
+### Clone Repo and Navigate to Project
 
 ```bash
 git clone https://github.com/ajcwebdev/dash-examples.git
