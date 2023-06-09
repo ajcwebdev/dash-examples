@@ -6,9 +6,9 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "dev:client": "vite",
-    "build:client": "vite build",
-    "start:client": "vite preview"
+    "dev": "vite",
+    "build": "vite build",
+    "start": "vite preview"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.0.0",

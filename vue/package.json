@@ -2,9 +2,9 @@
   "name": "ajcwebdev-vite",
   "type": "module",
   "scripts": {
-    "dev:client": "vite",
-    "build:client": "vite build",
-    "preview:client": "vite preview"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "vue": "^3.2.47"

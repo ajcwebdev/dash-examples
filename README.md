@@ -44,7 +44,6 @@ cd dash-examples
 ```bash
 pnpm i
 # npm i
-# yarn
 ```
 
 ### Set Environment Variables
@@ -58,7 +57,6 @@ If you don't already have one, create a wallet:
 ```bash
 pnpm createWallet
 # npm run createWallet
-# yarn createWallet
 ```
 
 Copy `WALLET_ADDRESS` and `MNEMONIC` and paste them into `.env`.
@@ -69,9 +67,36 @@ Copy `WALLET_ADDRESS` and `MNEMONIC` and paste them into `.env`.
 pnpm serve
 ```
 
+Run a curl command on the URL `http://localhost:3001/name/ajcwebdevtest`.
+
 ```bash
 curl "http://localhost:3001/name/ajcwebdevtest"
 ```
+
+This will output:
+
+```json
+{
+   "$id":"DqeamRwhQE6HNzFvk63ZVTpwBm4AZAss1wv5E46iPkkv",
+   "$ownerId":"94uozwXwnuVGyXwYGd5Unzyy9sCTuvqJecVspxadhNo1",
+   "$revision":1,
+   "label":"ajcwebdevtest",
+   "normalizedLabel":"ajcwebdevtest",
+   "normalizedParentDomainName":"dash",
+   "preorderSalt":"u60YDYG8BUuBcWjfXUGbkTr08JiB8JaKBqmVda3P2WI=",
+   "records":{
+      "dashUniqueIdentityId":"94uozwXwnuVGyXwYGd5Unzyy9sCTuvqJecVspxadhNo1"
+   },
+   "subdomainRules":{
+      "allowSubdomains":false
+   },
+   "$protocolVersion":1,
+   "$type":"domain",
+   "$dataContractId":"GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec"
+}
+```
+
+Next, go to one of the [frontend framework directories](#frontend-example-apps) and run the commands in the `README.md`.
 
 ## Dash Resources
 
