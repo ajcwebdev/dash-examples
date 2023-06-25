@@ -64,6 +64,7 @@ Copy `WALLET_ADDRESS` and `MNEMONIC` and paste them into `.env`.
 
 ```bash
 pnpm serve
+# npm run serve
 ```
 
 Run a curl command on the URL `http://localhost:3001/name/ajcwebdevtest`.
