@@ -23,7 +23,6 @@
 
 - [Vanilla JavaScript](https://github.com/ajcwebdev/dash-examples/tree/main/javascript)
 - [Angular](https://github.com/ajcwebdev/dash-examples/tree/main/angular)
-- [Lit](https://github.com/ajcwebdev/dash-examples/tree/main/lit)
 - [Preact](https://github.com/ajcwebdev/dash-examples/tree/main/preact)
 - [React](https://github.com/ajcwebdev/dash-examples/tree/main/react)
 - [Solid](https://github.com/ajcwebdev/dash-examples/tree/main/solid)
