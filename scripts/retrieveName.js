@@ -1,10 +1,13 @@
-import { client } from './client.js'
+// scripts/retrieveName.js
 
-const { DASH_NAME } = process.env
+import { client } from '../api/client.js'
+
+const { LABEL } = process.env
+// const LABEL = "ajcwebdevtest4"
 
 const retrieveName = async () => {
   const { platform } = client
-  const name = platform.names.resolve(DASH_NAME)
+  const name = platform.names.resolve(LABEL)
   return name
 }
 

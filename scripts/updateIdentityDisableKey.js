@@ -1,4 +1,4 @@
-import { client } from './client.js'
+import { client } from '../api/client.js'
 
 const { IDENTITY_ID } = process.env
 

@@ -1,4 +1,6 @@
-import { client } from './client.js'
+// scripts/retrieveIdentityIds.js
+
+import { client } from '../api/client.js'
 
 const retrieveIdentityIds = async () => {
   const walletAccount = await client.getWalletAccount()

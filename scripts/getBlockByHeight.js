@@ -1,4 +1,6 @@
-import { client } from "./client.js"
+// scripts/getBlockByHeight.js
+
+import { client } from '../api/client.js'
 
 async function getBlockByHeight() {
   const DAPIClient = client.getDAPIClient()

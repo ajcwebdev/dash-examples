@@ -1,4 +1,6 @@
-import { client } from './client.js'
+// scripts/createIdentity.js
+
+import { client } from '../api/client.js'
 
 const createIdentity = async () => {
   const { platform } = client

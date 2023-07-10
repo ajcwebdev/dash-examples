@@ -1,4 +1,6 @@
-import { client } from './client.js'
+// scripts/createWallet.js
+
+import { client } from '../api/client.js'
 
 const createWallet = async () => {
   const walletAccount = await client.getWalletAccount()

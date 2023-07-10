@@ -1,4 +1,6 @@
-import { client } from "./client.js"
+// scripts/getBlockHash.js
+
+import { client } from '../api/client.js'
 
 async function getBlockHash() {
   const DAPIClient = client.getDAPIClient()

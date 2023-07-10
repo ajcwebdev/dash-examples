@@ -1,3 +1,5 @@
+// scripts/getBestBlockHash.js
+
 import { client } from "./client.js"
 
 async function getBestBlockHash() {
