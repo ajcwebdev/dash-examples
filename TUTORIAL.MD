@@ -1,11 +1,14 @@
 ---
-canonicalURL: "https://ajcwebdev.com/2023/00/00/"
-title: "a first look at dash"
+slug: "first-look-dash"
+title: "A First Look at Dash"
 description: "Dash is a digital cryptocurrency launched in 2014 that aims to be a convenient, fast, and private digital cash platform that is suitable for everyday transactions."
-publishDate: "2023-00-00"
+publishDate: "2024-04-01"
+# updatedDate: ""
 tags: [ "Dash", "Node" ]
-image: ""
-layout: "@/layouts/BlogPost"
+coverImage:
+  src: "https://utfs.io/f/5b355cb5-10ff-43ec-b682-cc79c30e6811-yylgeu.webp"
+  alt: "Blog post cover art"
+draft: true
 ---
 
 ## Outline
@@ -15,16 +18,19 @@ layout: "@/layouts/BlogPost"
 - [Create Node Scripts](#create-node-scripts)
   - [Set Type to Module and Add Scripts](#set-type-to-module-and-add-scripts)
   - [Initialize Dash Client](#initialize-dash-client)
-  - [Get Best Block Hash](#get-best-block-hash)
-  - [Get Block Hash](#get-block-hash)
-  - [Get Block by Height](#get-block-by-height)
-- [Create Wallet](#create-wallet)
+  - [Query Blocks on Dash Testnet](#query-blocks-on-dash-testnet)
+- [Create Wallet and Identity](#create-wallet-and-identity)
   - [Configure Dash Client for Wallet Creation](#configure-dash-client-for-wallet-creation)
   - [Export Wallet Mnemonic](#export-wallet-mnemonic)
   - [Add Funds to Wallet with Testnet Faucet](#add-funds-to-wallet-with-testnet-faucet)
   - [Register and Retrieve Identity](#register-and-retrieve-identity)
   - [Topup Identity Credit Balance](#topup-identity-credit-balance)
   - [Register and Retrieve Name](#register-and-retrieve-name)
+- [Data Contracts](#data-contracts)
+  - [Register and Retrieve Contract](#register-and-retrieve-contract)
+  - [Update Contract](#update-contract)
+  - [Submit and Retrieve Documents](#submit-and-retrieve-documents)
+  - [Update and Delete Documents](#update-and-delete-documents)
 - [Backend](#backend)
   - [Add Express Server](#add-express-server)
 - [Add React App](#add-react-app)
@@ -150,15 +156,37 @@ export const client = new Dash.Client({
 
 The `network` is set to `testnet` via the `NETWORK` environment variable. The Dash Platform will be available on Mainnet in [Q?]().
 
-### Get Best Block Hash
+### Query Blocks on Dash Testnet
+
+Create a file called `getBlockMethods.js`.
+
+```bash
+echo > scripts/getBlockMethods.js
+```
+
+```js
+// scripts/getBlockMethods.js
+
+async function dapiClientMethods() {
+  console.log(await client.getDAPIClient().core.getBlockHash(1))
+  console.log(await client.getDAPIClient().core.getBestBlockHash())
+  console.log(await client.getDAPIClient().core.getBlockByHeight(1))
+  return client.getDAPIClient().core.getStatus()
+}
+
+dapiClientMethods()
+  .then((d) => console.log('Core status:\n', d))
+  .catch((e) => console.error('Something went wrong:\n', e))
+  .finally(() => client.disconnect())
+```
 
 Create a file called `getBestBlockHash.js`.
-
-`getBestBlockHash` returns the block hash of the chaintip.
 
 ```bash
 echo > scripts/getBestBlockHash.js
 ```
+
+`getBestBlockHash` returns the block hash of the chaintip.
 
 ```js
 // scripts/getBestBlockHash.js
@@ -190,15 +218,15 @@ pnpm getBestBlockHash
 000000c0e9209ac16e07929950d415bed816b71b7aa52507cc0c7ed964a10de4
 ```
 
-### Get Block Hash
-
 Create a file called `getBlockHash.js`.
-
-`getBlockHash` returns the block hash of a given height.
 
 ```bash
 echo > scripts/getBlockHash.js
 ```
+
+`getBlockHash` returns the block hash of a given height. In blockchain terminology, "height" refers to the position of a block in the chain. The first block ever mined (also known as the genesis block) typically has a height of 0.
+
+Each subsequent block that's added to the chain increases the height by one so the height of a block also represents the total number of blocks that precede it in the chain.
 
 ```js
 // scripts/getBlockHash.js
@@ -230,13 +258,13 @@ pnpm getBlockHash
 0000047d24635e347be3aaaeb66c26be94901a2f962feccd4f95090191f208c1
 ```
 
-### Get Block by Height
-
 Create a file called `getBlockByHeight.js`.
 
 ```bash
 echo > scripts/getBlockByHeight.js
 ```
+
+`getBlockByHeight` fetches a specific block by its height. Unlike `getBlockHash`, it returns a bufferized block instead of the corresponding block hash.
 
 ```js
 // scripts/getBlockByHeight.js
@@ -253,7 +281,9 @@ async function getBlockByHeight() {
 }
 
 getBlockByHeight()
+// getBlockByHeight(1)
   .then(data => console.log(data))
+  // .then(data => console.log(data.toString('hex')))
   .catch(error => console.error('Something went wrong:\n', error))
   .finally(() => client.disconnect())
 ```
@@ -271,7 +301,7 @@ pnpm getBlockByHeight
 }
 ```
 
-## Create Wallet
+## Create Wallet and Identity
 
 ### Configure Dash Client for Wallet Creation
 
@@ -342,15 +372,18 @@ Send test funds to the "unused address" from the console output using Dash's [te
 
 Search for your wallet address (`yXenbVhwqe1Vf19RWKfnnjWzYEiyCznYkV` in my case) to see your balance and list of transactions:
 
-![01 - Viewing new Dash wallet address on testnet block explorer](/img/2024-00-00-dash/01-dash.webp)
+02 - Viewing new Dash wallet address on testnet block explorer
+https://utfs.io/f/024743f9-012d-4c76-afff-4392b55d1872-7fo6pa.webp
 
-Click on the transaction link (`9ca05a57d2f8e55068a5c8be4453d3a84aa852304d1aa3d32d92b9b5afe32261` in my case) to view information on the transcation itself.
+Click on the transaction link (`9ca05a57d2f8e55068a5c8be4453d3a84aa852304d1aa3d32d92b9b5afe32261` in my case) to view information on the transaction itself.
 
-![02 - Viewing new Dash faucet transaction on testnet block explorer](/img/2024-00-00-dash/02-dash.webp)
+03 - Viewing new Dash faucet transaction on testnet block explorer
+https://utfs.io/f/53414063-991c-4439-a218-259aa9ff4afd-hyf03w.webp
 
 You can also click on the plus symbol (+) next the transaction link for more information related to the transaction confirmation.
 
-![03 - Viewing new transaction confirmation info on testnet block explorer](/img/2024-00-00-dash/03-dash.webp)
+04 - Viewing new transaction confirmation info on testnet block explorer
+https://utfs.io/f/8d38ee38-8e3f-4dd5-8d53-ae25c37522e3-xbhiel.webp
 
 ### Register and Retrieve Identity
 
@@ -632,10 +665,13 @@ pnpm retrieveName
 
 ## Data Contracts
 
-### Register Data Contract
+### Register and Retrieve Contract
+
+Create two files called `registerContract.js` and `retrieveContract.js`.
 
 ```bash
 echo > scripts/registerContract.js
+echo > scripts/retrieveContract.js
 ```
 
 ```js
@@ -708,12 +744,6 @@ pnpm registerContract
 }
 ```
 
-### Retrieve a Data Contract
-
-```bash
-echo > scripts/retrieveContract.js
-```
-
 ```js
 // scripts/retrieveContract.js
 
@@ -730,7 +760,9 @@ retrieveContract()
   .finally(() => client.disconnect())
 ```
 
-### Update Data Contract
+### Update Contract
+
+Create a file called `updateContract.js`.
 
 ```bash
 echo > scripts/updateContract.js
@@ -778,8 +810,6 @@ updateContract()
 pnpm updateContract
 ```
 
-### Submit Documents
-
 ```js
 // scripts/client.js
 
@@ -805,8 +835,13 @@ export const client = new Dash.Client({
 })
 ```
 
+### Submit and Retrieve Documents
+
+Create two files called `submitNoteDocument.js` and `getDocuments.js`.
+
 ```bash
 echo > scripts/submitNoteDocument.js
+echo > scripts/getDocuments.js
 ```
 
 ```js
@@ -831,8 +866,8 @@ const submitNoteDocument = async () => {
 
   const documentBatch = {
     create: [noteDocument], // Document(s) to create
-    replace: [], // Document(s) to update
-    delete: [], // Document(s) to delete
+    replace: [],            // Document(s) to update
+    delete: [],             // Document(s) to delete
   }
   // Sign and submit the document(s)
   return platform.documents.broadcast(documentBatch, identity)
@@ -848,12 +883,6 @@ submitNoteDocument()
 pnpm submitNoteDocument
 ```
 
-### Retrieve Documents
-
-```bash
-echo > scripts/getDocuments.js
-```
-
 ```js
 // scripts/getDocuments.js
 
@@ -866,6 +895,9 @@ const getDocuments = async () => {
 }
 
 getDocuments()
+  // .then((d) => {
+  //   d.forEach(n => console.log('Document:\n', n.toJSON()));
+  // })
   .then((d) => {
     for (const n of d) {
       console.log('Document:\n', n.toJSON())
@@ -879,10 +911,13 @@ getDocuments()
 pnpm getDocuments
 ```
 
-### Update Documents
+### Update and Delete Documents
+
+Create two files called `updateNoteDocument.js` and `deleteNoteDocument.js`.
 
 ```bash
 echo > scripts/updateNoteDocument.js
+echo > scripts/deleteNoteDocument.js
 ```
 
 ```js
@@ -916,12 +951,6 @@ updateNoteDocument()
 
 ```bash
 pnpm updateNoteDocument
-```
-
-### Delete Documents
-
-```bash
-echo > scripts/deleteNoteDocument.js
 ```
 
 ```js
@@ -1391,6 +1420,9 @@ export default App
   }
 </style>
 ```
+
+0? - react-frontend-with-express
+https://utfs.io/f/8d2900fa-158f-4154-84d3-7974b66feb94-51ru0a.webp
 
 ## Deploy
 
