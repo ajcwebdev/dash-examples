@@ -403,7 +403,7 @@ export const client = new Dash.Client({
   wallet: {
     mnemonic: MNEMONIC,
     unsafeOptions: {
-      skipSynchronizationBeforeHeight: 650000, // only sync from early-2022
+      skipSynchronizationBeforeHeight: 990000, // only sync from early-2022
     },
   },
 })
