@@ -84,7 +84,7 @@ The [Dash roadmap](https://www.dash.org/roadmap/) is always publicly viewable an
 mkdir ajcwebdev-dash
 cd ajcwebdev-dash
 npm init -y
-npm i dash dotenv
+npm i dash@1.0-dev dotenv
 echo '# A First Look at Dash' > README.md
 echo '.DS_Store\nnode_modules\n.env\ndist\n.netlify\n.vercel' > .gitignore
 ```
