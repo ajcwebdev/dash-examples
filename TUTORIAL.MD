@@ -372,18 +372,15 @@ Send test funds to the "unused address" from the console output using Dash's [te
 
 Search for your wallet address (`yXenbVhwqe1Vf19RWKfnnjWzYEiyCznYkV` in my case) to see your balance and list of transactions:
 
-02 - Viewing new Dash wallet address on testnet block explorer
-https://utfs.io/f/024743f9-012d-4c76-afff-4392b55d1872-7fo6pa.webp
+![01 - Viewing new Dash wallet address on testnet block explorer](https://utfs.io/f/024743f9-012d-4c76-afff-4392b55d1872-7fo6pa.webp)
 
 Click on the transaction link (`9ca05a57d2f8e55068a5c8be4453d3a84aa852304d1aa3d32d92b9b5afe32261` in my case) to view information on the transaction itself.
 
-03 - Viewing new Dash faucet transaction on testnet block explorer
-https://utfs.io/f/53414063-991c-4439-a218-259aa9ff4afd-hyf03w.webp
+![02 - Viewing new Dash faucet transaction on testnet block explorer](https://utfs.io/f/53414063-991c-4439-a218-259aa9ff4afd-hyf03w.webp)
 
 You can also click on the plus symbol (+) next the transaction link for more information related to the transaction confirmation.
 
-04 - Viewing new transaction confirmation info on testnet block explorer
-https://utfs.io/f/8d38ee38-8e3f-4dd5-8d53-ae25c37522e3-xbhiel.webp
+![03 - Viewing new transaction confirmation info on testnet block explorer](https://utfs.io/f/8d38ee38-8e3f-4dd5-8d53-ae25c37522e3-xbhiel.webp)
 
 ### Register and Retrieve Identity
 
