@@ -992,6 +992,8 @@ npm run deleteNoteDocument
 
 ### Add Express Server
 
+TODO: Update Express server commands to use Node 20 features including `watch` and `env` flags.
+
 ```bash
 npm i express cors npm-run-all
 mkdir api
@@ -1360,6 +1362,14 @@ export default App
 
 ### Vue
 
+```bash
+mkdir vue vue/src
+cd vue
+npm init -y
+npm i vue
+npm i -D @vitejs/plugin-vue vite
+```
+
 ```vue
 <template>
   <div>
@@ -1428,8 +1438,9 @@ export default App
 </style>
 ```
 
-0? - react-frontend-with-express
-https://utfs.io/f/8d2900fa-158f-4154-84d3-7974b66feb94-51ru0a.webp
+TODO: Update screenshot and fix CSS
+
+![04 - react-frontend-with-express](https://utfs.io/f/8d2900fa-158f-4154-84d3-7974b66feb94-51ru0a.webp)
 
 ## Deploy
 
