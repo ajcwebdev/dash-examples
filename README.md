@@ -41,8 +41,7 @@ cd dash-examples
 ### Install Project Dependencies
 
 ```bash
-pnpm i
-# npm i
+npm i
 ```
 
 ### Set Environment Variables
@@ -54,8 +53,7 @@ cp .env.example .env
 If you don't already have one, create a wallet:
 
 ```bash
-pnpm createWallet
-# npm run createWallet
+npm run createWallet
 ```
 
 Copy `WALLET_ADDRESS` and `MNEMONIC` and paste them into `.env`.
@@ -63,8 +61,7 @@ Copy `WALLET_ADDRESS` and `MNEMONIC` and paste them into `.env`.
 ### Start Development Server
 
 ```bash
-pnpm serve
-# npm run serve
+npm run serve
 ```
 
 Run a curl command on the URL `http://localhost:3001/name/ajcwebdevtest`.

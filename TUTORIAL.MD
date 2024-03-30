@@ -83,8 +83,8 @@ The [Dash roadmap](https://www.dash.org/roadmap/) is always publicly viewable an
 ```bash
 mkdir ajcwebdev-dash
 cd ajcwebdev-dash
-pnpm init
-pnpm add dash dotenv
+npm init -y
+npm i dash dotenv
 echo '# A First Look at Dash' > README.md
 echo '.DS_Store\nnode_modules\n.env\ndist\n.netlify\n.vercel' > .gitignore
 ```
@@ -211,7 +211,7 @@ getBestBlockHash()
 Run the `getBestBlockHash` script.
 
 ```bash
-pnpm getBestBlockHash
+npm run getBestBlockHash
 ```
 
 ```
@@ -251,7 +251,7 @@ getBlockHash()
 Run `getBlockHash`.
 
 ```bash
-pnpm getBlockHash
+npm run getBlockHash
 ```
 
 ```
@@ -289,7 +289,7 @@ getBlockByHeight()
 ```
 
 ```bash
-pnpm getBlockByHeight
+npm run getBlockByHeight
 ```
 
 ```json
@@ -358,7 +358,7 @@ createWallet()
 ```
 
 ```bash
-pnpm createWallet
+npm run createWallet
 ```
 
 ```
@@ -437,7 +437,7 @@ createIdentity()
 Run `createIdentity`.
 
 ```bash
-pnpm createIdentity
+npm run createIdentity
 ```
 
 It may take a few minutes for the command to complete.
@@ -473,7 +473,7 @@ retrieveIdentity()
 ```
 
 ```bash
-pnpm retrieveIdentity
+npm run retrieveIdentity
 ```
 
 ```js
@@ -527,7 +527,7 @@ retrieveIdentityIds()
 ```
 
 ```bash
-pnpm retrieveIdentityIds
+npm run retrieveIdentityIds
 ```
 
 ```js
@@ -567,7 +567,7 @@ topupIdentity()
 ```
 
 ```bash
-pnpm topupIdentity
+npm run topupIdentity
 ```
 
 ```
@@ -608,7 +608,7 @@ registerName()
 ```
 
 ```bash
-pnpm registerName
+npm run registerName
 ```
 
 Create a file called `retrieveName.js`.
@@ -639,7 +639,7 @@ retrieveName()
 ```
 
 ```bash
-pnpm retrieveName
+npm run retrieveName
 ```
 
 ```json
@@ -713,7 +713,7 @@ registerContract()
 ```
 
 ```bash
-pnpm registerContract
+npm run registerContract
 ```
 
 ```json
@@ -807,7 +807,7 @@ updateContract()
 ```
 
 ```bash
-pnpm updateContract
+npm run updateContract
 ```
 
 ```js
@@ -880,7 +880,7 @@ submitNoteDocument()
 ```
 
 ```bash
-pnpm submitNoteDocument
+npm run submitNoteDocument
 ```
 
 ```js
@@ -908,7 +908,7 @@ getDocuments()
 ```
 
 ```bash
-pnpm getDocuments
+npm run getDocuments
 ```
 
 ### Update and Delete Documents
@@ -950,7 +950,7 @@ updateNoteDocument()
 ```
 
 ```bash
-pnpm updateNoteDocument
+npm run updateNoteDocument
 ```
 
 ```js
@@ -980,7 +980,7 @@ deleteNoteDocument()
 ```
 
 ```bash
-pnpm deleteNoteDocument
+npm run deleteNoteDocument
 ```
 
 ## Backend
@@ -988,7 +988,7 @@ pnpm deleteNoteDocument
 ### Add Express Server
 
 ```bash
-pnpm add express cors npm-run-all
+npm i express cors npm-run-all
 mkdir api
 echo > api/server.js
 ```
@@ -1058,7 +1058,7 @@ app.listen(port, () => {
 ```
 
 ```bash
-pnpm serve
+npm run serve
 ```
 
 Open [`localhost:3001/name/ajcwebdevtest`](http://localhost:3001/name/ajcwebdevtest) or send a GET request with curl.
@@ -1093,8 +1093,8 @@ curl "http://localhost:3001/name/ajcwebdevtest"
 ```bash
 mkdir react react/src
 cd react
-pnpm init
-pnpm add @vitejs/plugin-react react react-dom vite
+npm init -y
+npm i @vitejs/plugin-react react react-dom vite
 ```
 
 Add Vite scripts to `package.json`.
@@ -1297,7 +1297,7 @@ a:hover {
 ```
 
 ```bash
-pnpm dev:client
+npm run dev:client
 ```
 
 ### Add Fetch Button
@@ -1429,7 +1429,7 @@ https://utfs.io/f/8d2900fa-158f-4154-84d3-7974b66feb94-51ru0a.webp
 Add `vercel` and  `netlify-cli` dependencies.
 
 ```bash
-pnpm add vercel netlify-cli
+npm i -D vercel netlify-cli
 ```
 
 Add `vercel` and `netlify` scripts to `package.json`.
@@ -1509,7 +1509,7 @@ export default async function handler(request, response) {
 ```
 
 ```bash
-pnpm dev
+npm run dev
 ```
 
 ```bash

@@ -13,8 +13,8 @@ cd dash-examples/vue
 ## Install Dependencies and Start Development Server
 
 ```bash
-pnpm i
-pnpm dev
+npm i
+npm run dev
 ```
 
 ## Dash Domain Name Component
