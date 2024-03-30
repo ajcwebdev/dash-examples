@@ -579,6 +579,8 @@ Create a file called `registerName.js`.
 echo > scripts/registerName.js
 ```
 
+Create a `LABEL` in `.env` with your desired name. I will be using `streamtest20240330`.
+
 ```js
 // scripts/registerName.js
 
@@ -614,8 +616,6 @@ Create a file called `retrieveName.js`.
 echo > scripts/retrieveName.js
 ```
 
-**BROKEN**
-
 ```js
 // scripts/retrieveName.js
 
@@ -638,6 +638,8 @@ retrieveName()
 ```bash
 npm run retrieveName
 ```
+
+**TODO: BROKEN, this is returning `null` right now and not the expected output as seen here.**
 
 ```json
 {
@@ -676,12 +678,11 @@ echo > scripts/retrieveContract.js
 
 import { client } from "./client.js"
 
-// const { IDENTITY_ID } = process.env
+const { IDENTITY_ID } = process.env
 
 const registerContract = async () => {
   const { platform } = client
-  const identity = await platform.identities.get('CMagyisVzApSfZGqFeDed8d5pWwGtaafukvrTKMxjWhn')
-  // const identity = await platform.identities.get(IDENTITY_ID)
+  const identity = await platform.identities.get(IDENTITY_ID)
   const contractDocuments = {
     note: {
       type: 'object',
