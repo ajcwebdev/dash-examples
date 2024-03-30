@@ -1066,11 +1066,13 @@ app.listen(port, () => {
 npm run serve
 ```
 
-Open [`localhost:3001/name/ajcwebdevtest`](http://localhost:3001/name/ajcwebdevtest) or send a GET request with curl.
+Open [`localhost:3001/name/streamtest20240330`](http://localhost:3001/name/streamtest20240330) or send a GET request with curl.
 
 ```bash
-curl "http://localhost:3001/name/ajcwebdevtest"
+curl "http://localhost:3001/name/streamtest20240330"
 ```
+
+Old output, update later:
 
 ```json
 {
@@ -1193,7 +1195,7 @@ function App() {
   const [blockchainData, setBlockchainData] = useState(null)
 
   useEffect(() => {
-    fetch('http://localhost:3001/name/ajcwebdevtest')
+    fetch('http://localhost:3001/name/streamtest20240330')
       .then(response => response.json())
       .then(data => setBlockchainData(data))
   }, [])
@@ -1320,7 +1322,7 @@ function App() {
 
   const fetchData = () => {
     setIsLoading(true) // Set loading to true when fetch begins
-    fetch('http://localhost:3001/name/ajcwebdevtest')
+    fetch('http://localhost:3001/name/streamtest20240330')
       .then(response => response.json())
       .then(data => {
         setBlockchainData(data)
@@ -1375,7 +1377,7 @@ export default App
 <script>
   import { ref, watch } from 'vue'
 
-  const URL = "http://localhost:3001/name/dashstreamtest"
+  const URL = "http://localhost:3001/name/streamtest20240330"
 
   export default {
     setup() {
@@ -1480,7 +1482,7 @@ mkdir api/vercel-name
 echo > "api/vercel-name/[identityName].js"
 ```
 
-Earlier we learned how to fetch data from the Express server in `api/server.js` and run it locally on `http://localhost:3001/`. We'll want to do the same with our API routes. The goal is to leave the React component completely unchanged with the exception of switching from `http://localhost:3001/name/ajcwebdevtest` to `http://localhost:3000/api/name/ajcwebdevtest`.
+Earlier we learned how to fetch data from the Express server in `api/server.js` and run it locally on `http://localhost:3001/`. We'll want to do the same with our API routes. The goal is to leave the React component completely unchanged with the exception of switching from `http://localhost:3001/name/streamtest20240330` to `http://localhost:3000/api/name/streamtest20240330`.
 
 ```js
 // api/vercel-name/[identityName].js
@@ -1518,7 +1520,7 @@ npm run dev
 ```
 
 ```bash
-curl "http://localhost:3000/api/name/ajcwebdevtest"
+curl "http://localhost:3000/api/name/streamtest20240330"
 ```
 
 ```bash
