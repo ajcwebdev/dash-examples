@@ -714,6 +714,13 @@ registerContract()
 npm run registerContract
 ```
 
+**NOTE: BROKEN**.
+
+```bash
+Something went wrong:
+ ValueError { __wbg_ptr: 3962784 }
+```
+
 ```json
 {
   "protocolVersion":1,
