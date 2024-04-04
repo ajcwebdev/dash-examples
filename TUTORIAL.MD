@@ -15,30 +15,23 @@ draft: true
 
 - [Introduction](#introduction)
   - [Dash Platform](#dash-platform)
-- [Create Node Scripts](#create-node-scripts)
-  - [Set Type to Module and Add Scripts](#set-type-to-module-and-add-scripts)
-  - [Initialize Dash Client](#initialize-dash-client)
-  - [Query Blocks on Dash Testnet](#query-blocks-on-dash-testnet)
+- [Setup and Configure Node Project](#setup-and-configure-node-project)
+  - [Create Project Structure and Initialize Dash Client](#create-project-structure-and-initialize-dash-client)
+  - [Query Blocks on Testnet](#query-blocks-on-testnet)
 - [Create Wallet and Identity](#create-wallet-and-identity)
-  - [Configure Dash Client for Wallet Creation](#configure-dash-client-for-wallet-creation)
-  - [Export Wallet Mnemonic](#export-wallet-mnemonic)
   - [Add Funds to Wallet with Testnet Faucet](#add-funds-to-wallet-with-testnet-faucet)
   - [Register and Retrieve Identity](#register-and-retrieve-identity)
-  - [Topup Identity Credit Balance](#topup-identity-credit-balance)
   - [Register and Retrieve Name](#register-and-retrieve-name)
 - [Data Contracts](#data-contracts)
-  - [Register and Retrieve Contract](#register-and-retrieve-contract)
-  - [Update Contract](#update-contract)
-  - [Submit and Retrieve Documents](#submit-and-retrieve-documents)
-  - [Update and Delete Documents](#update-and-delete-documents)
-- [Backend](#backend)
-  - [Add Express Server](#add-express-server)
-- [Add React App](#add-react-app)
-  - [Add Vite Configuration](#add-vite-configuration)
-  - [Create App Component](#create-app-component)
-  - [Add CSS Styling](#add-css-styling)
-  - [Add Fetch Button](#add-fetch-button)
-  - [Vue](#vue)
+  - [Register, Retrieve, and Update Contract](#register-retrieve-and-update-contract)
+  - [Submit and Retrieve Document](#submit-and-retrieve-document)
+  - [Update and Delete Document](#update-and-delete-document)
+- [Setup Backend Server with Express](#setup-backend-server-with-express)
+- [Create React App](#create-react-app)
+  - [Setup React Project Structure](#setup-react-project-structure)
+  - [Add Fetch Button to React App](#add-fetch-button-to-react-app)
+- [Create Vue App](#create-vue-app)
+  - [Setup Vue Project Structure](#setup-vue-project-structure)
 - [Deploy](#deploy)
   - [Create Vercel API Route](#create-vercel-api-route)
   - [Create Netlify Function](#create-netlify-function)
@@ -48,9 +41,7 @@ draft: true
 
 ## Introduction
 
-Dash is a digital cryptocurrency that was launched in 2014. Originally called XCoin (XCO), it was renamed Darkcoin and then finally rebranded as Dash in 2015. "Dash" is a portmanteau of "Digital Cash" and was created as a fork of Bitcoin.
-
-Despite its origins, today Dash differs significantly from Bitcoin by aiming to be a convenient, fast, and private digital cash platform that is suitable for everyday transactions. This goal is reflected in its design features which include:
+Dash is a digital cryptocurrency that was launched in 2014. Originally called XCoin (XCO), it was renamed Darkcoin and then finally rebranded as Dash in 2015. "Dash" is a portmanteau of "Digital Cash" and was created as a fork of Bitcoin. Despite its origins, today Dash differs significantly from Bitcoin by aiming to be a convenient, fast, and private digital cash platform that is suitable for everyday transactions. This goal is reflected in its design features which include:
 
 - __PrivateSend__: This feature ensures user privacy by mixing transactions together, making them untraceable to individual users.
 - __InstantSend__: Dash's InstantSend feature enables near-instant transaction confirmations that are faster than Bitcoin's.
@@ -76,26 +67,37 @@ Key features of the platform include:
     - [`js-dapi-client`](https://github.com/dashpay/platform/tree/master/packages/js-dapi-client)
     - [`js-dpp`](https://github.com/dashpay/platform/tree/master/packages/js-dpp)
 
-The [Dash roadmap](https://www.dash.org/roadmap/) is always publicly viewable and currently extends into 2024.
+The [Dash roadmap](https://www.dash.org/roadmap/) is always publicly viewable so users and developers can see what is being worked on for the next year or so development. Right now the upcoming network implementations schedule for 2024 and beyond include the following: 
 
-## Create Node Scripts
+- Dash Platform v1.0 (ROLL OUT) begins the roll out of the platform on Mainnet.
+  - The release will emphasize written documentation, tutorials, and Dash Improvement Proposals (DIPs).
+  - v1.0 `ACTIVATION` will signal the official activation of the protocol and triggers after a specific number of masternode owners upgrade.
+  - The DashPay Launch will complete the v1.0 release and enable creating on-chain usernames for the official DashPay mobile app.
+- Dash Platform v2.0 plans to build in support for both of the following:
+  - Fungible tokens to mint specific tokens.
+  - Non-fungible tokens for storing NFT data on chain.
+- Dash Platform v3.0 will add a Virtual Machine for Smart Contracts to allow on-chain computation.
+- Dash Platform v4.0 implements the Inter-Blockchain Communication Protocol (IBC) to enable permissionless, cross-chain applications.
+  - As of April 2024, this is the last scheduled release currently on the roadmap
+
+## Setup and Configure Node Project
+
+### Create Project Structure and Initialize Dash Client
 
 ```bash
-mkdir ajcwebdev-dash
-cd ajcwebdev-dash
+mkdir dash-examples
+cd dash-examples
 npm init -y
 npm i dash@1.0-dev dotenv
 echo '# A First Look at Dash' > README.md
-echo '.DS_Store\nnode_modules\n.env\ndist\n.netlify\n.vercel' > .gitignore
+echo '.DS_Store\nnode_modules\n.env\ndist\n.vercel' > .gitignore
 ```
 
-### Set Type to Module and Add Scripts
-
-Set `"type": "module",` in `package.json`.
+Open `package.json` and set `type` to `module`.
 
 ```json
 {
-  "name": "ajcwebdev-dash",
+  "name": "dash-examples",
   "description": "An example application using the Dash JavaScript SDK",
   "keywords": [ "Dash", "JavaScript" ],
   "author": "Anthony Campolo",
@@ -104,15 +106,19 @@ Set `"type": "module",` in `package.json`.
   "dependencies": {
     "dash": "^3.24.3"
   },
+}
+```
+
+We'll create each script file individually throughout the tutorial but for the sake of simplifying your life while following along with this tutorial, I'd recommend adding all of the Node scripts that will be implemented by the end of the tutorial.
+
+```json
+{
   "scripts": {
-    "getBestBlockHash": "node scripts/getBestBlockHash",
-    "getBlockHash": "node scripts/getBlockHash",
-    "getBlockByHeight": "node scripts/getBlockByHeight",
+    "getBlockMethods": "node scripts/getBlockMethods",
     "createWallet": "node scripts/createWallet",
     "createIdentity": "node scripts/createIdentity",
     "retrieveIdentity": "node scripts/retrieveIdentity",
     "retrieveIdentityIds": "node scripts/retrieveIdentityIds",
-    "updateIdentityDisableKey": "node scripts/updateIdentityDisableKey",
     "topupIdentity": "node scripts/topupIdentity",
     "registerName": "node scripts/registerName",
     "retrieveName": "node scripts/retrieveName",
@@ -122,13 +128,10 @@ Set `"type": "module",` in `package.json`.
     "submitNoteDocument": "node scripts/submitNoteDocument",
     "getDocuments": "node scripts/getDocuments",
     "updateNoteDocument": "node scripts/updateNoteDocument",
-    "deleteNoteDocument": "node scripts/deleteNoteDocument",
-    "serve": "node api/server"
+    "deleteNoteDocument": "node scripts/deleteNoteDocument"
   }
 }
 ```
-
-### Initialize Dash Client
 
 Create a directory for our Node scripts and a file called `client.js` for initializing `Dash.Client`. 
 
@@ -156,6 +159,22 @@ export const client = new Dash.Client({
 
 The `network` is set to `testnet` via the `NETWORK` environment variable. The Dash Platform will be available on Mainnet in [Q?]().
 
+```js
+import Dash from "dash"
+import * as dotenv from "dotenv"
+dotenv.config()
+
+const { NETWORK } = process.env
+
+export const client = new Dash.Client({
+  network: NETWORK,
+  wallet: {
+    mnemonic: null,
+    offlineMode: true,
+  },
+})
+```
+
 ### Query Blocks on Dash Testnet
 
 Create a file called `getBlockMethods.js`.
@@ -164,146 +183,73 @@ Create a file called `getBlockMethods.js`.
 echo > scripts/getBlockMethods.js
 ```
 
+- `getBestBlockHash` returns the block hash of the chaintip.
+- `getBlockHash` returns the block hash of a given height.
+  - In blockchain terminology, "height" refers to the position of a block in the chain. The first block ever mined (also known as the genesis block) typically has a height of 0.
+  - Each subsequent block that's added to the chain increases the height by one so the height of a block also represents the total number of blocks that precede it in the chain.
+- `getBlockByHeight` fetches a specific block by its height.
+  - Unlike `getBlockHash`, it returns a bufferized block instead of the corresponding block hash.
+
 ```js
 // scripts/getBlockMethods.js
 
+import { client } from '../api/client.js'
+
 async function dapiClientMethods() {
-  console.log(await client.getDAPIClient().core.getBlockHash(1))
-  console.log(await client.getDAPIClient().core.getBestBlockHash())
-  console.log(await client.getDAPIClient().core.getBlockByHeight(1))
+  console.log("\ngetBlockByHeight():", await client.getDAPIClient().core.getBlockByHeight(1))
+  console.log("\ngetBlockHash(1):", await client.getDAPIClient().core.getBlockHash(1))
+  console.log("\ngetBestBlockHash():", await client.getDAPIClient().core.getBestBlockHash())
   return client.getDAPIClient().core.getStatus()
 }
-
+  
 dapiClientMethods()
-  .then((d) => console.log('Core status:\n', d))
+  .then((d) => console.log('\nCore status:\n', d))
   .catch((e) => console.error('Something went wrong:\n', e))
   .finally(() => client.disconnect())
 ```
 
-Create a file called `getBestBlockHash.js`.
+Run `getBlockMethods` script:
 
 ```bash
-echo > scripts/getBestBlockHash.js
-```
-
-`getBestBlockHash` returns the block hash of the chaintip.
-
-```js
-// scripts/getBestBlockHash.js
-
-import { client } from "./client.js"
-
-async function getBestBlockHash() {
-  const DAPIClient = client.getDAPIClient()
-  const res = await DAPIClient.core.getBestBlockHash()
-  if (!res) {
-    throw new Error('No response received from getBestBlockHash API call')
-  }
-  return res
-}
-
-getBestBlockHash()
-  .then(data => console.log(data))
-  .catch(error => console.error('Something went wrong:\n', error))
-  .finally(() => client.disconnect())
-```
-
-Run the `getBestBlockHash` script.
-
-```bash
-npm run getBestBlockHash
+npm run getBlockMethods
 ```
 
 ```
-000000c0e9209ac16e07929950d415bed816b71b7aa52507cc0c7ed964a10de4
-```
+getBlockByHeight(): <Buffer 02 00 00 00 2c bc f8 3b 62 91 3d 56 f6 05 c0 e5 81 a4 88 72 83 94 28 c9 2e 5e b7 6c d7 ad 94 bc af 0b 00 00 7f 11 dc ce 14 07 55 20 e8 f7 4c c4 dd f0 ... 136 more bytes>
 
-Create a file called `getBlockHash.js`.
+getBlockHash(1): 0000047d24635e347be3aaaeb66c26be94901a2f962feccd4f95090191f208c1
 
-```bash
-echo > scripts/getBlockHash.js
-```
+getBestBlockHash(): 000000ec93f8559ca1bd9f5391519457d596a2e806bc18934b4208a67d7e8613
 
-`getBlockHash` returns the block hash of a given height. In blockchain terminology, "height" refers to the position of a block in the chain. The first block ever mined (also known as the genesis block) typically has a height of 0.
+Core status:
 
-Each subsequent block that's added to the chain increases the height by one so the height of a block also represents the total number of blocks that precede it in the chain.
-
-```js
-// scripts/getBlockHash.js
-
-import { client } from "./client.js"
-
-async function getBlockHash() {
-  const DAPIClient = client.getDAPIClient()
-  const res = await DAPIClient.core.getBlockHash(1)
-  if (!res) {
-    throw new Error('No response received from getBlockHash API call')
-  }
-  return res
-}
-
-getBlockHash()
-  .then(data => console.log(data))
-  .catch(error => console.error('Something went wrong:\n', error))
-  .finally(() => client.disconnect())
-```
-
-Run `getBlockHash`.
-
-```bash
-npm run getBlockHash
-```
-
-```
-0000047d24635e347be3aaaeb66c26be94901a2f962feccd4f95090191f208c1
-```
-
-Create a file called `getBlockByHeight.js`.
-
-```bash
-echo > scripts/getBlockByHeight.js
-```
-
-`getBlockByHeight` fetches a specific block by its height. Unlike `getBlockHash`, it returns a bufferized block instead of the corresponding block hash.
-
-```js
-// scripts/getBlockByHeight.js
-
-import { client } from "./client.js"
-
-async function getBlockByHeight() {
-  const DAPIClient = client.getDAPIClient()
-  const res = await DAPIClient.core.getBlockByHeight(1)
-  if (!res) {
-    throw new Error('No response received from getBlockByHeight API call')
-  }
-  return JSON.stringify(res)
-}
-
-getBlockByHeight()
-// getBlockByHeight(1)
-  .then(data => console.log(data))
-  // .then(data => console.log(data.toString('hex')))
-  .catch(error => console.error('Something went wrong:\n', error))
-  .finally(() => client.disconnect())
-```
-
-```bash
-npm run getBlockByHeight
-```
-
-```json
 {
-  "type":"Buffer",
-  "data":[
-    2,0,0,0,44,188,248,59,98,145,61,86,246,5,192,229,129,164,136,114,131,148,40,201,46,94,183,108,215,173,148,188,175,11,0,0,127,17,220,206,20,7,85,32,232,247,76,196,221,240,146,180,226,110,189,35,184,216,102,90,26,229,191,196,27,88,253,180,195,169,94,83,255,255,15,30,243,122,0,0,1,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,255,255,255,255,10,81,1,1,6,47,80,50,83,72,47,255,255,255,255,1,0,116,59,164,11,0,0,0,35,33,2,1,49,243,138,227,235,7,20,83,29,191,195,244,84,145,180,19,29,18,17,227,119,113,119,99,99,136,187,90,116,195,228,172,0,0,0,0
-  ]
+  version: { protocol: 70231, software: 200100, agent: '/Dash Core:20.1.0/' },
+  time: { now: 1712202862, offset: 0, median: 1712202281 },
+  status: 'READY',
+  syncProgress: 0.9999998313288757,
+  chain: {
+    name: 'test',
+    headersCount: 1000829,
+    blocksCount: 1000829,
+    bestBlockHash: <Buffer 00 00 00 ec 93 f8 55 9c a1 bd 9f 53 91 51 94 57 d5 96 a2 e8 06 bc 18 93 4b 42 08 a6 7d 7e 86 13>,
+    difficulty: 0.002571093773539426,
+    chainWork: <Buffer 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02 fb b3 16 61 bd 47 9a>,
+    isSynced: true,
+    syncProgress: 0.9999998313288757
+  },
+  masternode: {
+    status: 'READY',
+    proTxHash: <Buffer 61 d3 3f 47 89 33 79 7b e4 de 88 35 3c 7c 2d 84 3c 21 31 0f 6d 00 f6 ef f3 14 24 a7 56 ee 7d fb>,
+    posePenalty: 0,
+    isSynced: true,
+    syncProgress: 1
+  },
+  network: { peersCount: 135, fee: { relay: 0.00001, incremental: 0.00001 } }
 }
 ```
 
 ## Create Wallet and Identity
-
-### Configure Dash Client for Wallet Creation
 
 Modify the client configuration with the following:
 
@@ -330,7 +276,7 @@ export const client = new Dash.Client({
 })
 ```
 
-### Export Wallet Mnemonic
+Create a file called `createWallet.js`.
 
 ```bash
 echo > scripts/createWallet.js
@@ -356,6 +302,8 @@ createWallet()
   .catch(error => console.error('Something went wrong:\n', error))
   .finally(() => client.disconnect())
 ```
+
+Run `createWallet` script.
 
 ```bash
 npm run createWallet
@@ -431,7 +379,7 @@ createIdentity()
   .finally(() => client.disconnect())
 ```
 
-Run `createIdentity`.
+Run `createIdentity` script.
 
 ```bash
 npm run createIdentity
@@ -468,6 +416,8 @@ retrieveIdentity()
   .catch(error => console.error('Something went wrong:\n', error))
   .finally(() => client.disconnect())
 ```
+
+Run `retrieveIdentity` script:
 
 ```bash
 npm run retrieveIdentity
@@ -523,6 +473,8 @@ retrieveIdentityIds()
   .finally(() => client.disconnect())
 ```
 
+Run `retrieveIdentityIds` script:
+
 ```bash
 npm run retrieveIdentityIds
 ```
@@ -533,8 +485,6 @@ npm run retrieveIdentityIds
   'DPRGKkVPkwxGW6zFhUreovjMLbqUR63j8Xj19cpVktDp'
 ]
 ```
-
-### Topup Identity Credit Balance
 
 Create a file called `topupIdentity.js`.
 
@@ -562,6 +512,8 @@ topupIdentity()
   .catch(error => console.error('Something went wrong:\n', error))
   .finally(() => client.disconnect())
 ```
+
+Run `topupIdentity` script:
 
 ```bash
 npm run topupIdentity
@@ -606,6 +558,8 @@ registerName()
   .finally(() => client.disconnect())
 ```
 
+Run `registerName` script:
+
 ```bash
 npm run registerName
 ```
@@ -634,6 +588,8 @@ retrieveName()
   .catch(error => console.error('Something went wrong:\n', error))
   .finally(() => client.disconnect())
 ```
+
+Run `retrieveName` script:
 
 ```bash
 npm run retrieveName
@@ -664,13 +620,14 @@ npm run retrieveName
 
 ## Data Contracts
 
-### Register and Retrieve Contract
+### Register, Retrieve, and Update Contract
 
-Create two files called `registerContract.js` and `retrieveContract.js`.
+Create files called `registerContract.js`, `retrieveContract.js`, and `updateContract.js`.
 
 ```bash
 echo > scripts/registerContract.js
 echo > scripts/retrieveContract.js
+echo > scripts/updateContract.js
 ```
 
 ```js
@@ -709,6 +666,8 @@ registerContract()
   .catch((e) => console.error('Something went wrong:\n', e))
   .finally(() => client.disconnect())
 ```
+
+Run `registerContract` script:
 
 ```bash
 npm run registerContract
@@ -763,14 +722,6 @@ retrieveContract()
   .then((d) => console.dir(d.toJSON(), { depth: 5 }))
   .catch((e) => console.error('Something went wrong:\n', e))
   .finally(() => client.disconnect())
-```
-
-### Update Contract
-
-Create a file called `updateContract.js`.
-
-```bash
-echo > scripts/updateContract.js
 ```
 
 ```js
@@ -930,9 +881,11 @@ echo > scripts/deleteNoteDocument.js
 
 import { client } from "./client.js"
 
+const IDENTITY_ID = 'CMagyisVzApSfZGqFeDed8d5pWwGtaafukvrTKMxjWhn'
+
 const updateNoteDocument = async () => {
   const { platform } = client
-  const identity = await platform.identities.get('CMagyisVzApSfZGqFeDed8d5pWwGtaafukvrTKMxjWhn')
+  const identity = await platform.identities.get(IDENTITY_ID)
   const documentId = 'an existing document ID goes here'
 
   // Retrieve the existing document
@@ -942,7 +895,10 @@ const updateNoteDocument = async () => {
   )
 
   // Update document
-  document.set('message', `Updated document @ ${new Date().toUTCString()}`)
+  document.set(
+    'message',
+    `Updated document @ ${new Date().toUTCString()}`
+  )
 
   // Sign and submit the document replace transition
   return platform.documents.broadcast({ replace: [document] }, identity)
@@ -953,6 +909,8 @@ updateNoteDocument()
   .catch((e) => console.error('Something went wrong:\n', e))
   .finally(() => client.disconnect())
 ```
+
+Run `updateNoteDocument` script:
 
 ```bash
 npm run updateNoteDocument
@@ -988,49 +946,26 @@ deleteNoteDocument()
 npm run deleteNoteDocument
 ```
 
-## Backend
-
-### Add Express Server
-
-TODO: Update Express server commands to use Node 20 features including `watch` and `env` flags.
+## Setup Backend Server with Express
 
 ```bash
-npm i express cors npm-run-all
+npm i express cors
 mkdir api
 echo > api/server.js
 ```
 
+TODO: Update Express server commands to use Node 20 features including `watch` and `env` flags.
+
 ```json
 {
-  "name": "ajcwebdev-dash",
-  "description": "An example application using the Dash JavaScript SDK",
-  "keywords": [ "Dash", "JavaScript" ],
-  "author": "Anthony Campolo",
-  "license": "MIT",
-  "type": "module",
   "scripts": {
-    "getBestBlockHash": "node scripts/getBestBlockHash",
-    "getBlockHash": "node scripts/getBlockHash",
-    "getBlockByHeight": "node scripts/getBlockByHeight",
-    "createWallet": "node scripts/createWallet",
-    "createIdentity": "node scripts/createIdentity",
-    "retrieveIdentity": "node scripts/retrieveIdentity",
-    "retrieveIdentityIds": "node scripts/retrieveIdentityIds",
-    "updateIdentityDisableKey": "node scripts/updateIdentityDisableKey",
-    "topupIdentity": "node scripts/topupIdentity",
-    "registerName": "node scripts/registerName",
-    "retrieveName": "node scripts/retrieveName",
     "start:server": "node api/server",
-    "dev:server": "node api/server",
-    "start": "run-p start:*",
-    "dev": "run-p dev:*"
+    "dev:server": "node api/server"
   },
   "dependencies": {
     "cors": "^2.8.5",
     "dash": "^3.24.4",
-    "dotenv": "^16.0.3",
-    "express": "^4.18.2",
-    "npm-run-all": "^4.1.5"
+    "express": "^4.18.2"
   }
 }
 ```
@@ -1097,13 +1032,23 @@ Old output, update later:
 }
 ```
 
-## Add React App
+## Create React App
 
 ```bash
 mkdir react react/src
 cd react
 npm init -y
 npm i @vitejs/plugin-react react react-dom vite
+```
+
+### Setup React Project Structure
+
+```bash
+echo > vite.config.js
+echo > index.html
+echo > src/main.jsx
+echo > src/App.jsx
+echo > src/index.css
 ```
 
 Add Vite scripts to `package.json`.
@@ -1130,11 +1075,7 @@ Add Vite scripts to `package.json`.
 }
 ```
 
-### Add Vite Configuration
-
-```bash
-echo > vite.config.js
-```
+Add Vite configuration to `vite.config.js`.
 
 ```js
 // vite.config.js
@@ -1147,12 +1088,7 @@ export default defineConfig({
 })
 ```
 
-```bash
-echo > index.html
-echo > src/main.jsx
-echo > src/App.jsx
-echo > src/index.css
-```
+Add the base HTML entry point template to `index.html` which loads `./src/main.jsx` with a `script` tag.
 
 ```html
 <!-- index.html -->
@@ -1171,51 +1107,7 @@ echo > src/index.css
 </html>
 ```
 
-```jsx
-// src/main.jsx
-
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
-
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
-```
-
-### Create App Component
-
-```js
-// src/App.jsx
-
-import { useEffect, useState } from 'react'
-
-function App() {
-  const [blockchainData, setBlockchainData] = useState(null)
-
-  useEffect(() => {
-    fetch('http://localhost:3001/name/streamtest20240330')
-      .then(response => response.json())
-      .then(data => setBlockchainData(data))
-  }, [])
-
-  return (
-    <>
-      <h1>Dash + React + Express</h1>
-      <pre>
-        {JSON.stringify(blockchainData, null, 2)}
-      </pre>
-    </>
-  )
-}
-
-export default App
-```
-
-### Add CSS Styling
+Add CSS styling in `index.css`.
 
 ```css
 /* src/index.css */
@@ -1305,11 +1197,58 @@ a:hover {
 }
 ```
 
+`main.jsx` imports the `App` component from `./App.jsx` and renders the app with `createRoot`.
+
+```jsx
+// src/main.jsx
+
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.jsx'
+import './index.css'
+
+ReactDOM.createRoot(document.getElementById('root'))
+  .render(
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>,
+  )
+```
+
+Create the App component in `App.jsx`.
+
+```js
+// src/App.jsx
+
+import { useEffect, useState } from 'react'
+
+function App() {
+  const [blockchainData, setBlockchainData] = useState(null)
+
+  useEffect(() => {
+    fetch('http://localhost:3001/name/streamtest20240330')
+      .then(response => response.json())
+      .then(data => setBlockchainData(data))
+  }, [])
+
+  return (
+    <>
+      <h1>Dash + React + Express</h1>
+      <pre>
+        {JSON.stringify(blockchainData, null, 2)}
+      </pre>
+    </>
+  )
+}
+
+export default App
+```
+
 ```bash
 npm run dev:client
 ```
 
-### Add Fetch Button
+### Add Fetch Button to React App
 
 ```jsx
 // src/App.jsx
@@ -1360,7 +1299,7 @@ function App() {
 export default App
 ```
 
-### Vue
+## Create Vue App
 
 ```bash
 mkdir vue vue/src
@@ -1369,6 +1308,10 @@ npm init -y
 npm i vue
 npm i -D @vitejs/plugin-vue vite
 ```
+
+### Setup Vue Project Structure
+
+### Add Fetch Button to Vue App
 
 ```vue
 <template>
@@ -1444,28 +1387,17 @@ TODO: Update screenshot and fix CSS
 
 ## Deploy
 
-Add `vercel` and  `netlify-cli` dependencies.
+Add `vercel`, `wrangler`, and `@fleekxyz/cli` dependencies.
 
 ```bash
-npm i -D vercel netlify-cli
+npm i -D vercel wrangler @fleekxyz/cli
 ```
 
-Add `vercel` and `netlify` scripts to `package.json`.
+Add `vercel` and `wrangler` scripts to `package.json`.
 
 ```json
 {
   "scripts": {
-    "getBestBlockHash": "node scripts/getBestBlockHash",
-    "getBlockHash": "node scripts/getBlockHash",
-    "getBlockByHeight": "node scripts/getBlockByHeight",
-    "createWallet": "node scripts/createWallet",
-    "createIdentity": "node scripts/createIdentity",
-    "retrieveIdentity": "node scripts/retrieveIdentity",
-    "retrieveIdentityIds": "node scripts/retrieveIdentityIds",
-    "updateIdentityDisableKey": "node scripts/updateIdentityDisableKey",
-    "topupIdentity": "node scripts/topupIdentity",
-    "registerName": "node scripts/registerName",
-    "retrieveName": "node scripts/retrieveName",
     "start:server": "node api/server",
     "dev:server": "node api/server",
     "dev:client": "vite",
@@ -1474,16 +1406,16 @@ Add `vercel` and `netlify` scripts to `package.json`.
     "start": "run-p start:*",
     "dev": "run-p dev:*",
     "vercel": "vercel dev",
-    "netlify": "ntl dev"
+    "wrangler": "wrangler dev"
   },
 }
 ```
 
-Create `vercel.json` and `netlify.toml` configuration files.
+Create `vercel.json` and `wrangler.toml` configuration files.
 
 ```bash
 echo '{"buildCommand": "npm run build"}' > vercel.json
-echo > netlify.toml
+echo > wrangler.toml
 ```
 
 ### Create Vercel API Route
@@ -1535,85 +1467,19 @@ curl "http://localhost:3000/api/name/streamtest20240330"
 ```
 
 ```bash
-vercel
-```
-
-### Create Netlify Function
-
-```bash
-mkdir api/functions
-echo > api/functions/name.js
-```
-
-```js
-// api/functions/name.js
-
-import Dash from "dash"
-
-const client = new Dash.Client({ network: 'testnet' })
-
-exports.handler = async (event, context) => {
-  try {
-    const name = event.path.split('/').pop()
-    const result = await client.platform.names.resolve(`${name}.dash`)
-    client.disconnect()
-    return {
-      statusCode: 200,
-      body: JSON.stringify(result.toJSON().label),
-      headers: {
-        "Content-Type": "application/json",
-        'Access-Control-Allow-Origin': '*', // Required for CORS support to work
-        'Access-Control-Allow-Credentials': true, // Required for cookies, authorization headers with HTTPS 
-      }
-    }
-  } catch (e) {
-    client.disconnect()
-    return {
-      statusCode: 500,
-      body: 'Something went wrong:\n' + e.toString()
-    }
-  }
-}
-```
-
-```toml
-# netlify.toml
-
-[build]
-  command = "npm run build"
-  functions = "api/functions"
-  publish = "dist"
-```
-
-```bash
 git init
 git add .
 git commit -m "init"
-gh repo create dash-netlify \
-  --private \
+gh repo create dash-examples \
+  --public \
   --push \
   --source=. \
-  --description="An example Dash app built with React and Netlify Functions." \
+  --description="An example Dash app built with React and Vue deployed on Vercel, Cloudflare Pages, and Fleek." \
   --remote=upstream
 ```
 
 ```bash
-ntl init
-```
-
-```
-? What would you like to do? +  Create & configure a new site
-? Team: ajcwebdev
-? Site name (leave blank for a random name; you can change it later): dash-netlify
-
-Site Created
-
-Admin URL: https://app.netlify.com/sites/dash-netlify
-URL:       https://dash-netlify.netlify.app
-Site ID:   80e3d213-f568-43da-b574-77ada0d2329a
-
-? Your build command (hugo build/yarn run build/etc): npm run build
-? Directory to deploy (blank for current dir): build
+vercel
 ```
 
 ## Resources

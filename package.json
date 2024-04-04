@@ -6,9 +6,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "getBestBlockHash": "node scripts/getBestBlockHash",
-    "getBlockHash": "node scripts/getBlockHash",
-    "getBlockByHeight": "node scripts/getBlockByHeight",
+    "getBlockMethods": "node scripts/getBlockMethods",
     "createWallet": "node scripts/createWallet",
     "createIdentity": "node scripts/createIdentity",
     "retrieveIdentity": "node scripts/retrieveIdentity",

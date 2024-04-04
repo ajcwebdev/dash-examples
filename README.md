@@ -22,12 +22,11 @@
 ### Frontend Example Apps
 
 - [Vanilla JavaScript](https://github.com/ajcwebdev/dash-examples/tree/main/javascript)
-- [Angular](https://github.com/ajcwebdev/dash-examples/tree/main/angular)
-- [Preact](https://github.com/ajcwebdev/dash-examples/tree/main/preact)
 - [React](https://github.com/ajcwebdev/dash-examples/tree/main/react)
-- [Solid](https://github.com/ajcwebdev/dash-examples/tree/main/solid)
-- [Svelte](https://github.com/ajcwebdev/dash-examples/tree/main/svelte)
 - [Vue](https://github.com/ajcwebdev/dash-examples/tree/main/vue)
+- [Svelte](https://github.com/ajcwebdev/dash-examples/tree/main/svelte)
+- [Solid](https://github.com/ajcwebdev/dash-examples/tree/main/solid)
+- [Angular](https://github.com/ajcwebdev/dash-examples/tree/main/angular)
 
 ## Setup
 
