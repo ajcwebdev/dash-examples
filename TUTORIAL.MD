@@ -27,14 +27,13 @@ draft: true
   - [Submit and Retrieve Document](#submit-and-retrieve-document)
   - [Update and Delete Document](#update-and-delete-document)
 - [Setup Backend Server with Express](#setup-backend-server-with-express)
-- [Create React App](#create-react-app)
+- [Create React and Vue Apps](#create-react-and-vue-apps)
   - [Setup React Project Structure](#setup-react-project-structure)
   - [Add Fetch Button to React App](#add-fetch-button-to-react-app)
-- [Create Vue App](#create-vue-app)
   - [Setup Vue Project Structure](#setup-vue-project-structure)
-- [Deploy](#deploy)
+  - [Add Fetch Button to Vue App](#add-fetch-button-to-vue-app)
+- [Setup Deployment](#setup-deployment)
   - [Create Vercel API Route](#create-vercel-api-route)
-  - [Create Netlify Function](#create-netlify-function)
 - [Resources](#resources)
 
 > ___All of this project's code can be found in the [`a-first-look` repo](https://github.com/ajcwebdev/a-first-look/dash) on my GitHub.___
@@ -1299,7 +1298,7 @@ function App() {
 export default App
 ```
 
-## Create Vue App
+### Setup Vue Project Structure
 
 ```bash
 mkdir vue vue/src
@@ -1309,7 +1308,6 @@ npm i vue
 npm i -D @vitejs/plugin-vue vite
 ```
 
-### Setup Vue Project Structure
 
 ### Add Fetch Button to Vue App
 
@@ -1385,15 +1383,15 @@ TODO: Update screenshot and fix CSS
 
 ![04 - react-frontend-with-express](https://utfs.io/f/8d2900fa-158f-4154-84d3-7974b66feb94-51ru0a.webp)
 
-## Deploy
+## Setup Vercel Deployment
 
-Add `vercel`, `wrangler`, and `@fleekxyz/cli` dependencies.
+Add the `vercel` CLI dependency.
 
 ```bash
-npm i -D vercel wrangler @fleekxyz/cli
+npm i -D vercel
 ```
 
-Add `vercel` and `wrangler` scripts to `package.json`.
+Add a `vercel` script to `package.json`.
 
 ```json
 {
@@ -1405,8 +1403,7 @@ Add `vercel` and `wrangler` scripts to `package.json`.
     "start:client": "vite preview",
     "start": "run-p start:*",
     "dev": "run-p dev:*",
-    "vercel": "vercel dev",
-    "wrangler": "wrangler dev"
+    "vercel": "vercel dev"
   },
 }
 ```
