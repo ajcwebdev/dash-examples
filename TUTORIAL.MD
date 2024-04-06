@@ -390,6 +390,13 @@ It may take a few minutes for the command to complete.
 IDENTITY_ID="94uozwXwnuVGyXwYGd5Unzyy9sCTuvqJecVspxadhNo1"
 ```
 
+Explain that [Dash Platform has a different explorer](platform-explorer.com).
+
+Screenshot of transaction creation:
+
+https://platform-explorer.com/transaction/5A126E7E9DA9B57039BE6A1CC0F90B2DB606AB3CA23A6048687FD5072E611855
+
+
 Create a file called `retrieveIdentity.js`.
 
 ```bash
@@ -424,28 +431,56 @@ npm run retrieveIdentity
 
 ```js
 {
-  protocolVersion: 1,
-  id: '94uozwXwnuVGyXwYGd5Unzyy9sCTuvqJecVspxadhNo1',
-  publicKeys: [
+  "$version": "0",
+  "id": "4Xw57LceuKgxHF5WV9fLsQRsD9bzUfggwRF83jMEocdD",
+  "publicKeys": [
     {
-      id: 0,
-      purpose: 0,
-      securityLevel: 0,
-      type: 0,
-      readOnly: false,
-      data: 'AwgXUnHoYbDT/KfwZNYSLkXlgh+/O8pPgl+sav07EeRF'
+      "$version": "0",
+      "id": 0,
+      "purpose": 0,
+      "securityLevel": 0,
+      "contractBounds": null,
+      "type": 0,
+      "readOnly": false,
+      "data": "A3hXVthPMTBGBBQ4vMLQjiGiuvGLQlgOSBzuqTiI2Su/",
+      "disabledAt": null
     },
     {
-      id: 1,
-      purpose: 0,
-      securityLevel: 2,
-      type: 0,
-      readOnly: false,
-      data: 'A5CVLMyt/WrRmmhaDXe93vuqlzDupm43P7p6roMRwFUU'
+      "$version": "0",
+      "id": 1,
+      "purpose": 0,
+      "securityLevel": 2,
+      "contractBounds": null,
+      "type": 0,
+      "readOnly": false,
+      "data": "AhxiEyaPeJCjHHLLpevPvYulgNULhigfrqua/s+uIu/t",
+      "disabledAt": null
+    },
+    {
+      "$version": "0",
+      "id": 2,
+      "purpose": 0,
+      "securityLevel": 1,
+      "contractBounds": null,
+      "type": 0,
+      "readOnly": false,
+      "data": "AjjbQi8/L9B275AolbpRngWjRKurGvXxmcVzWrrem1OS",
+      "disabledAt": null
+    },
+    {
+      "$version": "0",
+      "id": 3,
+      "purpose": 3,
+      "securityLevel": 1,
+      "contractBounds": null,
+      "type": 0,
+      "readOnly": false,
+      "data": "AiicnyDnaj7WKmXwT6knuO51BC4YEKG933u4GjXDJfbl",
+      "disabledAt": null
     }
   ],
-  balance: 920385020,
-  revision: 0
+  "balance": 880932110,
+  "revision": 0
 }
 ```
 
@@ -485,6 +520,14 @@ npm run retrieveIdentityIds
 ]
 ```
 
+When an Identity is created, a special transaction transforms Dash into credits which are used to interact with Dash Platform.
+
+1 DASH = 100,000,000 [Satoshis](https://www.fool.com/terms/s/satoshi/)/Duffs = 100,000,000,000 credits
+
+1 Satoshi = 1000 credits
+
+Since interacting with Dash Platform applications decreases your credit balance, at a certain point you'll need to topup the balance by converting some Dash to credits.
+
 Create a file called `topupIdentity.js`.
 
 ```bash
@@ -500,7 +543,7 @@ const { IDENTITY_ID } = process.env
 
 const topupIdentity = async () => {
   const { platform } = client
-  await platform.identities.topUp(IDENTITY_ID, 1000)
+  await platform.identities.topUp(IDENTITY_ID, 50000)
   return platform.identities.get(IDENTITY_ID)
 }
 
@@ -619,6 +662,12 @@ npm run retrieveName
 
 ## Data Contracts
 
+A Data Contract on Dash Platform serves as a blueprint for the structure of data that an application intends to store on the decentralized network. It defines the schema of documents (data records) with JSON Schema.
+
+- Contracts enable the platform to validate data against these schemas to ensure consistency and integrity.
+- They are crucial for dApps and provide a structured and predictable way to interact with the Dash blockchain.
+- Data Contracts facilitate data storage, retrieval, and manipulation in a trustless environment.
+
 ### Register, Retrieve, and Update Contract
 
 Create files called `registerContract.js`, `retrieveContract.js`, and `updateContract.js`.
@@ -639,29 +688,30 @@ const { IDENTITY_ID } = process.env
 const registerContract = async () => {
   const { platform } = client
   const identity = await platform.identities.get(IDENTITY_ID)
+
   const contractDocuments = {
     note: {
       type: 'object',
       properties: {
-        message: { type: 'string', },
+        message: {
+          type: 'string',
+          "position": 0
+        },
       },
       additionalProperties: false,
     },
   }
+
   const contract = await platform.contracts.create(contractDocuments, identity)
   console.dir({ contract: contract.toJSON() })
-  const validationResult = await platform.dpp.dataContract.validate(contract)
-  if (validationResult.isValid()) {
-    console.log('Validation passed, broadcasting contract..')
-    // Sign and submit the data contract
-    return platform.contracts.publish(contract, identity)
-  }
-  console.error(validationResult) // An array of detailed validation errors
-  throw validationResult.errors[0]
+
+  // Sign and submit the data contract
+  await platform.contracts.publish(contract, identity)
+  return contract
 }
 
 registerContract()
-  .then((d) => console.log('Contract registered:\n', JSON.stringify(d.toJSON())))
+  .then((d) => console.log('Contract registered:\n', d.toJSON()))
   .catch((e) => console.error('Something went wrong:\n', e))
   .finally(() => client.disconnect())
 ```
@@ -672,11 +722,52 @@ Run `registerContract` script:
 npm run registerContract
 ```
 
-**NOTE: BROKEN**.
-
-```bash
-Something went wrong:
- ValueError { __wbg_ptr: 3962784 }
+```js
+{
+  contract: {
+    '$format_version': '0',
+    id: '67a2kVtA8hLMRsv6rmNHf238ki6wmwZa5qjeH2D2ipq1',
+    config: {
+      '$format_version': '0',
+      canBeDeleted: false,
+      readonly: false,
+      keepsHistory: false,
+      documentsKeepHistoryContractDefault: false,
+      documentsMutableContractDefault: true,
+      requiresIdentityEncryptionBoundedKey: null,
+      requiresIdentityDecryptionBoundedKey: null
+    },
+    version: 1,
+    ownerId: '4Xw57LceuKgxHF5WV9fLsQRsD9bzUfggwRF83jMEocdD',
+    schemaDefs: null,
+    documentSchemas: { note: [Object] }
+  }
+}
+Contract registered:
+ {
+  '$format_version': '0',
+  id: '67a2kVtA8hLMRsv6rmNHf238ki6wmwZa5qjeH2D2ipq1',
+  config: {
+    '$format_version': '0',
+    canBeDeleted: false,
+    readonly: false,
+    keepsHistory: false,
+    documentsKeepHistoryContractDefault: false,
+    documentsMutableContractDefault: true,
+    requiresIdentityEncryptionBoundedKey: null,
+    requiresIdentityDecryptionBoundedKey: null
+  },
+  version: 1,
+  ownerId: '4Xw57LceuKgxHF5WV9fLsQRsD9bzUfggwRF83jMEocdD',
+  schemaDefs: null,
+  documentSchemas: {
+    note: {
+      type: 'object',
+      properties: [Object],
+      additionalProperties: false
+    }
+  }
+}
 ```
 
 ```json
