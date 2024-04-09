@@ -2,12 +2,11 @@
 
 import { client } from "./client.js"
 
-// const { IDENTITY_ID } = process.env
+const { IDENTITY_ID } = process.env
 
 const registerContract = async () => {
   const { platform } = client
-  const identity = await platform.identities.get('CMagyisVzApSfZGqFeDed8d5pWwGtaafukvrTKMxjWhn')
-  // const identity = await platform.identities.get(IDENTITY_ID)
+  const identity = await platform.identities.get(IDENTITY_ID)
   const contractDocuments = {
     note: {
       type: 'object',
@@ -30,6 +29,6 @@ const registerContract = async () => {
 }
 
 registerContract()
-  .then((d) => console.log('Contract registered:\n', JSON.stringify(d.toJSON())))
+  .then((d) => console.log("CONTRACT_ID:" + JSON.stringify(d.toJSON())))
   .catch((e) => console.error('Something went wrong:\n', e))
   .finally(() => client.disconnect())

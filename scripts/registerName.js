@@ -15,9 +15,6 @@ const registerName = async () => {
 }
 
 registerName()
-  .then(data => console.log(
-    `DASH_NAME=${JSON.stringify(data.toJSON().label)}.dash`
-    // "LABEL=" + JSON.stringify(data.toJSON().label)
-  ))
+  .then(data => console.log(`DASH_NAME=${JSON.stringify(data.toJSON().label)}.dash`))
   .catch(error => console.error("Something went wrong:\n", error))
   .finally(() => client.disconnect())
