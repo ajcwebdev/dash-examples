@@ -1,13 +1,18 @@
 // scripts/retrieveContract.js
 
-import { client } from "./client.js"
+import { client } from '../api/client.js'
+
+const { CONTRACT_ID } = process.env
 
 const retrieveContract = async () => {
-  const contractId = '4wpbRzGoCDHLqYqNufB3vcGW6YAmeRYueFty4GFFn42T'
-  return client.platform.contracts.get(contractId)
+  try {
+    const contract = await client.platform.contracts.get(CONTRACT_ID)
+    console.dir(contract.toJSON(), { depth: 5 })
+  } catch (e) {
+    console.error('Something went wrong:\n', e)
+  } finally {
+    client.disconnect()
+  }
 }
 
 retrieveContract()
-  .then((d) => console.dir(d.toJSON(), { depth: 5 }))
-  .catch((e) => console.error('Something went wrong:\n', e))
-  .finally(() => client.disconnect())

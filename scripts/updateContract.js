@@ -2,34 +2,28 @@
 
 import { client } from '../api/client.js'
 
+const { IDENTITY_ID, CONTRACT_ID } = process.env
+
 const updateContract = async () => {
-  const { platform } = client
-  const identity = await platform.identities.get('CMagyisVzApSfZGqFeDed8d5pWwGtaafukvrTKMxjWhn')
+  try {
+    const identity = await client.platform.identities.get(IDENTITY_ID)
+    const existingDataContract = await client.platform.contracts.get(CONTRACT_ID)
+    const documentSchema = existingDataContract.getDocumentSchema('note')
 
-  const existingDataContract = await platform.contracts.get('4wpbRzGoCDHLqYqNufB3vcGW6YAmeRYueFty4GFFn42T')
-  const documents = existingDataContract.getDocuments()
+    documentSchema.properties.author = {
+      type: 'string',
+      position: 1
+    }
 
-  documents.note.properties.author = {
-    type: 'string',
+    existingDataContract.setDocumentSchema('note', documentSchema)
+
+    await client.platform.contracts.update(existingDataContract, identity)
+    console.log('\nContract updated:\n\n', existingDataContract.toJSON())
+  } catch (e) {
+    console.error('Something went wrong:\n', e)
+  } finally {
+    client.disconnect()
   }
-
-  existingDataContract.setDocuments(documents)
-
-  // Make sure contract passes validation checks
-  const validationResult = await platform.dpp.dataContract.validate(
-    existingDataContract,
-  )
-
-  if (validationResult.isValid()) {
-    console.log('Validation passed, broadcasting contract..')
-    // Sign and submit the data contract
-    return platform.contracts.update(existingDataContract, identity)
-  }
-  console.error(validationResult) // An array of detailed validation errors
-  throw validationResult.errors[0]
 }
 
 updateContract()
-  .then((d) => console.log('Contract updated:\n', d.toJSON()))
-  .catch((e) => console.error('Something went wrong:\n', e))
-  .finally(() => client.disconnect())

@@ -1,5 +1,5 @@
 {
-  "name": "ajcwebdev-dash",
+  "name": "dash-examples",
   "description": "An example application using the Dash JavaScript SDK",
   "keywords": [ "Dash", "JavaScript" ],
   "author": "Anthony Campolo",
@@ -10,10 +10,8 @@
     "createFirstWallet": "node --env-file=.env scripts/createFirstWallet",
     "createWallet": "node --env-file=.env scripts/createWallet",
     "createIdentity": "node --env-file=.env scripts/createIdentity",
-    "retrieveIdentity": "node --env-file=.env scripts/retrieveIdentity",
-    "retrieveIdentityIds": "node --env-file=.env scripts/retrieveIdentityIds",
-    "updateIdentityDisableKey": "node --env-file=.env scripts/updateIdentityDisableKey",
-    "topupIdentity": "node --env-file=.env scripts/topupIdentity",
+    "retrieveIdentities": "node --env-file=.env scripts/retrieveIdentities",
+    "topupIdentities": "node --env-file=.env scripts/topupIdentities",
     "registerName": "node --env-file=.env scripts/registerName",
     "retrieveName": "node --env-file=.env scripts/retrieveName",
     "registerContract": "node --env-file=.env scripts/registerContract",
@@ -26,16 +24,8 @@
     "serve": "node --env-file=.env --watch api/express/server"
   },
   "dependencies": {
-    "@vitejs/plugin-react": "^4.0.0",
     "cors": "^2.8.5",
-    "dash": "^3.24.4",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "netlify-cli": "^15.1.1",
-    "npm-run-all": "^4.1.5",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "vercel": "^29.3.6",
-    "vite": "^4.3.8"
+    "dash": "^4.0.0-dev.10",
+    "express": "^4.18.2"
   }
 }
