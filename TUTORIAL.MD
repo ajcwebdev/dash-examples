@@ -6,7 +6,7 @@ publishDate: "2024-04-01"
 # updatedDate: ""
 tags: [ "Dash", "Node" ]
 coverImage:
-  src: "https://utfs.io/f/5b355cb5-10ff-43ec-b682-cc79c30e6811-yylgeu.webp"
+  src: "https://ajc.pics/dash-examples/00-dash-examples.webp"
   alt: "Blog post cover art"
 draft: true
 ---
@@ -25,16 +25,12 @@ draft: true
   - [Submit and Retrieve Document](#submit-and-retrieve-document)
   - [Update and Delete Document](#update-and-delete-document)
 - [Setup Backend Server with Express](#setup-backend-server-with-express)
-- [Create React and Vue Apps](#create-react-and-vue-apps)
+- [Create React App](#create-react-app)
   - [Setup React Project Structure](#setup-react-project-structure)
   - [Add Fetch Button to React App](#add-fetch-button-to-react-app)
-  - [Setup Vue Project Structure](#setup-vue-project-structure)
-  - [Add Fetch Button to Vue App](#add-fetch-button-to-vue-app)
 - [Setup Deployment](#setup-deployment)
   - [Create Vercel API Route](#create-vercel-api-route)
 - [Resources](#resources)
-
-> ___All of this project's code can be found in the [`a-first-look` repo](https://github.com/ajcwebdev/a-first-look/dash) on my GitHub.___
 
 ## Dash Platform Overview
 
@@ -254,15 +250,15 @@ Send test funds to the "unused address" from the console output using Dash's [te
 
 Search for your wallet address (`yXenbVhwqe1Vf19RWKfnnjWzYEiyCznYkV` in my case) to see your balance and list of transactions:
 
-![01 - Viewing new Dash wallet address on testnet block explorer](https://utfs.io/f/024743f9-012d-4c76-afff-4392b55d1872-7fo6pa.webp)
+![01 - Viewing new Dash wallet address on testnet block explorer](https://ajc.pics/dash-examples/01-wallet-address-on-dash-block-explorer.webp)
 
 Click on the transaction link (`9ca05a57d2f8e55068a5c8be4453d3a84aa852304d1aa3d32d92b9b5afe32261` in my case) to view information on the transaction itself.
 
-![02 - Viewing new Dash faucet transaction on testnet block explorer](https://utfs.io/f/53414063-991c-4439-a218-259aa9ff4afd-hyf03w.webp)
+![02 - Viewing new Dash faucet transaction on testnet block explorer](https://ajc.pics/dash-examples/02-transaction-on-block-explorer.webp)
 
 You can also click on the plus symbol (+) next to the transaction link for more information related to the transaction confirmation.
 
-![03 - Viewing new transaction confirmation info on testnet block explorer](https://utfs.io/f/8d38ee38-8e3f-4dd5-8d53-ae25c37522e3-xbhiel.webp)
+![03 - Viewing new transaction confirmation info on testnet block explorer](https://ajc.pics/dash-examples/03-transaction-confirmation.webp)
 
 ### Register and Retrieve Identity
 
@@ -328,6 +324,8 @@ Gqf64Q54JuPGZZfVXPaNTrNTYpY2BbvhJjQMp3fLUuBG
 Screenshot of transaction creation:
 
 https://platform-explorer.com/identity/Gqf64Q54JuPGZZfVXPaNTrNTYpY2BbvhJjQMp3fLUuBG
+
+![04-platform-explorer-identity-endpoint](https://ajc.pics/dash-examples/04-platform-explorer-identity-endpoint.webp)
 
 Create a file called `retrieveIdentities.js`.
 
@@ -466,6 +464,8 @@ LABEL="streamtest20240409"
 ```
 
 https://platform-explorer.com/document/Aaun8ywpu9xNJiuVU8VxMoMi31GZkC1yuPrLSuJHzfWy
+
+![05-platform-explorer-document-endpoint](https://ajc.pics/dash-examples/05-platform-explorer-document-endpoint.webp)
 
 Create a file called `retrieveName.js`.
 
@@ -1157,188 +1157,17 @@ Old output, update later:
 
 ## Create React App
 
-```bash
-mkdir react react/src
-cd react
-npm init -y
-npm i @vitejs/plugin-react react react-dom vite
-```
+TODO: Use Next.js
 
 ### Setup React Project Structure
 
-```bash
-echo > vite.config.js
-echo > index.html
-echo > src/main.jsx
-echo > src/App.jsx
-echo > src/index.css
-```
-
-Add Vite scripts to `package.json`.
+`package.json`.
 
 ```json
-{
-  "name": "react",
-  "description": "An example Dash application using React",
-  "keywords": [ "Dash", "React" ],
-  "author": "Anthony Campolo",
-  "license": "MIT",
-  "type": "module",
-  "scripts": {
-    "dev:client": "vite",
-    "build:client": "vite build",
-    "start:client": "vite preview"
-  },
-  "dependencies": {
-    "@vitejs/plugin-react": "^4.0.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "vite": "^4.3.9"
-  }
-}
+
 ```
 
-Add Vite configuration to `vite.config.js`.
-
-```js
-// vite.config.js
-
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-
-export default defineConfig({
-  plugins: [react()],
-})
-```
-
-Add the base HTML entry point template to `index.html` which loads `./src/main.jsx` with a `script` tag.
-
-```html
-<!-- index.html -->
-
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dash + React + Express</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="./src/main.jsx"></script>
-  </body>
-</html>
-```
-
-Add CSS styling in `index.css`.
-
-```css
-/* src/index.css */
-
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
-}
-
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-.alignLeft {
-  display: flex;
-  justify-content: flex-start;
-}
-
-.preLeft {
-  text-align: left;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
-```
-
-`main.jsx` imports the `App` component from `./App.jsx` and renders the app with `createRoot`.
-
-```jsx
-// src/main.jsx
-
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
-
-ReactDOM.createRoot(document.getElementById('root'))
-  .render(
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>,
-  )
-```
-
-Create the App component in `App.jsx`.
+App component.
 
 ```js
 // src/App.jsx
@@ -1422,90 +1251,9 @@ function App() {
 export default App
 ```
 
-### Setup Vue Project Structure
-
-```bash
-mkdir vue vue/src
-cd vue
-npm init -y
-npm i vue
-npm i -D @vitejs/plugin-vue vite
-```
-
-
-### Add Fetch Button to Vue App
-
-```vue
-<template>
-  <div>
-    <HelloWorld msg="Vite + Vue" />
-    <h1>Dash + Vue + Express</h1>
-    <button @click="triggerFetch = true">Fetch Data</button>
-    <p class="alignLeft">
-      <pre class="preLeft">
-        {{ isLoading ? 'Loading...' : JSON.stringify(blockchainData, null, 2) }}
-      </pre>
-    </p>
-  </div>
-</template>
-
-<script>
-  import { ref, watch } from 'vue'
-
-  const URL = "http://localhost:3001/name/streamtest20240409"
-
-  export default {
-    setup() {
-      const blockchainData = ref(null)
-      const triggerFetch = ref(false)
-      const isLoading = ref(false)
-
-      const fetchData = () => {
-        isLoading.value = true
-        fetch(URL)
-          .then(response => response.json())
-          .then(data => {
-            blockchainData.value = data
-            isLoading.value = false
-          })
-      }
-      watch(triggerFetch, (newVal) => {
-        if (newVal) {
-          fetchData()
-          triggerFetch.value = false
-        }
-      })
-      return { blockchainData, triggerFetch, isLoading }
-    }
-  }
-</script>
-
-<style scoped>
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-  }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-  }
-  .logo.vue:hover {
-    filter: drop-shadow(0 0 2em #42b883aa);
-  }
-  .alignLeft {
-    display: flex;
-    justify-content: flex-start;
-  }
-  .preLeft {
-    text-align: left;
-  }
-</style>
-```
-
 TODO: Update screenshot and fix CSS
 
-![04 - react-frontend-with-express](https://utfs.io/f/8d2900fa-158f-4154-84d3-7974b66feb94-51ru0a.webp)
+![06 - react-frontend-with-express](https://ajc.pics/dash-examples/06-react-frontend-with-express.webp)
 
 ## Setup Vercel Deployment
 
@@ -1595,7 +1343,7 @@ gh repo create dash-examples \
   --public \
   --push \
   --source=. \
-  --description="An example Dash app built with React and Vue deployed on Vercel, Cloudflare Pages, and Fleek." \
+  --description="An example Dash app built with React and deployed on Vercel." \
   --remote=upstream
 ```
 
