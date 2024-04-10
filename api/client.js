@@ -2,7 +2,7 @@
 
 import Dash from "dash"
 
-const { MNEMONIC, NETWORK, CONTRACT_ID } = process.env
+const { NETWORK, MNEMONIC, CONTRACT_ID } = process.env
 
 export const client = new Dash.Client({
   network: NETWORK,

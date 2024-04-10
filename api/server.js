@@ -1,4 +1,4 @@
-// api/express/server.js
+// api/server.js
 
 import express from 'express'
 import cors from 'cors'
