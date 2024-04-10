@@ -109,7 +109,8 @@ We'll create each script file individually throughout the tutorial but for the s
     "submitNoteDocument": "node --env-file=.env scripts/submitNoteDocument",
     "getDocuments": "node --env-file=.env scripts/getDocuments",
     "updateNoteDocument": "node --env-file=.env scripts/updateNoteDocument",
-    "deleteNoteDocument": "node --env-file=.env scripts/deleteNoteDocument"
+    "deleteNoteDocument": "node --env-file=.env scripts/deleteNoteDocument",
+    "express": "node --env-file=.env --watch api/server"
   }
 }
 ```
@@ -204,6 +205,8 @@ getBestBlockHash(): 000000ec93f8559ca1bd9f5391519457d596a2e806bc18934b4208a67d7e
 
 ## Create Wallet and Identity
 
+<!-- ### Create Wallet and Identity -->
+
 Create a file called `createWallet.js`.
 
 ```bash
@@ -240,8 +243,8 @@ npm run createWallet
 ```
 
 ```
-WALLET_ADDRESS="yXenbVhwqe1Vf19RWKfnnjWzYEiyCznYkV"
-MNEMONIC="pencil civil ship feed tape buffalo crowd caution disorder tuna soul soda"
+WALLET_ADDRESS=""
+MNEMONIC=""
 ```
 
 ### Add Funds to Wallet with Testnet Faucet
@@ -269,7 +272,7 @@ Modify the client again and include your wallet's `MNEMONIC` seed phrase saved i
 
 import Dash from "dash"
 
-const { MNEMONIC, NETWORK } = process.env
+const { NETWORK, MNEMONIC } = process.env
 
 export const client = new Dash.Client({
   network: NETWORK,
@@ -297,6 +300,7 @@ async function createIdentity() {
   try {
     const identity = await client.platform.identities.register()
     console.log("IDENTITY_ID=" + `"${identity.toJSON().id}"`)
+    console.log(`\nView on platform block explorer: https://platform-explorer.com/identity/${name.$id}\n`)
   } catch (error) {
     console.error('Something went wrong:\n', error)
   } finally {
@@ -314,18 +318,23 @@ npm run createIdentity
 ```
 
 ```
-IDENTITY_ID="94uozwXwnuVGyXwYGd5Unzyy9sCTuvqJecVspxadhNo1"
+IDENTITY_ID=""
 ```
 
-Earlier, we saw how to view our transactions on the Dash block explorer. For operations performed on Dash Platform, there is a separate explorer at [platform-explorer.com](https://platform-explorer.com). Open the [Identities](https://platform-explorer.com/identities) tab to see your ID on the list. Alternatively, you can simply append you ID to the URL after `https://platform-explorer.com/identity/`.
+Earlier, we saw how to view our transactions on the Dash block explorer. For operations performed on Dash Platform, there is a separate explorer at [platform-explorer.com](https://platform-explorer.com).
 
-Gqf64Q54JuPGZZfVXPaNTrNTYpY2BbvhJjQMp3fLUuBG
+- Open the [Identities](https://platform-explorer.com/identities) tab to see your ID on the list.
+- Alternatively, `createIdentity` appends the ID to the URL `https://platform-explorer.com/identity/` and outputs the link to your terminal for convenience.
 
-Screenshot of transaction creation:
+TODO: Screenshot of transaction creation:
 
 https://platform-explorer.com/identity/Gqf64Q54JuPGZZfVXPaNTrNTYpY2BbvhJjQMp3fLUuBG
 
 ![04-platform-explorer-identity-endpoint](https://ajc.pics/dash-examples/04-platform-explorer-identity-endpoint.webp)
+
+TODO: Screenshot IDENTITY_CREATE transaction
+
+https://platform-explorer.com/transaction/4CCC2937C174ECF8F17823FDFE9834BEEE2F2488D81A052525BD1E44AD449916
 
 Create a file called `retrieveIdentities.js`.
 
@@ -390,7 +399,7 @@ async function topupIdentities() {
     const identityIds = walletAccount.identities.getIdentityIds()
 
     for (const id of identityIds) {
-      await client.platform.identities.topUp(id, 100000)
+      await client.platform.identities.topUp(id, 100000000)
       const identity = await client.platform.identities.get(id)
       console.log(`IDENTITY_CREDIT_BALANCE for ID ${id}: ${identity.balance}`)
     }
@@ -411,8 +420,14 @@ npm run topupIdentities
 ```
 
 ```
-IDENTITY_CREDIT_BALANCE for ID Gqf64Q54JuPGZZfVXPaNTrNTYpY2BbvhJjQMp3fLUuBG: 920284770
+IDENTITY_CREDIT_BALANCE for ID: 
 ```
+
+TODO: Screenshot of Transfers tab on `https://platform-explorer.com/identity/`
+
+TODO: Screenshot IDENTITY_TOP_UP transaction
+
+https://platform-explorer.com/transaction/D0E1DBE4F9F582B472440EEEC4DE543FD22842F7360695BCF418514B7E51FDF8
 
 ### Register and Retrieve Name
 
@@ -443,6 +458,8 @@ async function registerName() {
       `${LABEL}.dash`, { dashUniqueIdentityId }, identity
     )
     console.log("LABEL=" + JSON.stringify(nameRegistration.toJSON().label))
+    // TODO: Test this works
+    // console.log(`\nView on block explorer: https://platform-explorer.com/document/${nameRegistration.toJSON().$id}\n`)
   } catch (error) {
     console.error("Something went wrong:\n", error)
   } finally {
@@ -505,50 +522,14 @@ npm run retrieveName
 Resolved name object:
 
 ```js
-{
-  '$id': 'Aaun8ywpu9xNJiuVU8VxMoMi31GZkC1yuPrLSuJHzfWy',
-  '$ownerId': 'Gqf64Q54JuPGZZfVXPaNTrNTYpY2BbvhJjQMp3fLUuBG',
-  label: 'streamtest20240409',
-  normalizedLabel: 'streamtest20240409',
-  normalizedParentDomainName: 'dash',
-  parentDomainName: 'dash',
-  preorderSalt: '4wQ+j0vNvEM4MqYd7rhS0FmAEqLhsEBA2KGjqlxM0d4=',
-  records: {
-    dashUniqueIdentityId: '61Y/gnUBpjC3dZY/0YTIVNeSpUa0nXsBdxMEnICcscs='
-  },
-  subdomainRules: { allowSubdomains: false },
-  '$revision': 1,
-  '$createdAt': null,
-  '$updatedAt': null,
-  '$createdAtBlockHeight': null,
-  '$updatedAtBlockHeight': null,
-  '$createdAtCoreBlockHeight': null,
-  '$updatedAtCoreBlockHeight': null,
-  '$dataContract': {
-    '$format_version': '0',
-    id: 'GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec',
-    config: {
-      '$format_version': '0',
-      canBeDeleted: false,
-      readonly: false,
-      keepsHistory: false,
-      documentsKeepHistoryContractDefault: false,
-      documentsMutableContractDefault: true,
-      requiresIdentityEncryptionBoundedKey: null,
-      requiresIdentityDecryptionBoundedKey: null
-    },
-    version: 1,
-    ownerId: '4EfA9Jrvv3nnCFdSf7fad59851iiTRZ6Wcu6YVJ4iSeF',
-    schemaDefs: null,
-    documentSchemas: { domain: [Object], preorder: [Object] }
-  },
-  '$type': 'domain'
-}
+
 ```
 
-View on block explorer: https://platform-explorer.com/document/Aaun8ywpu9xNJiuVU8VxMoMi31GZkC1yuPrLSuJHzfWy
+View on block explorer: [platform-explorer.com/document/Aaun8ywpu9xNJiuVU8VxMoMi31GZkC1yuPrLSuJHzfWy](https://platform-explorer.com/document/Aaun8ywpu9xNJiuVU8VxMoMi31GZkC1yuPrLSuJHzfWy).
 
 ## Data Contracts
+
+<!-- ### Data Contracts -->
 
 A Data Contract on Dash Platform serves as a blueprint for the structure of data that an application intends to store on the decentralized network. It defines the schema of documents (data records) with JSON Schema.
 
@@ -586,6 +567,7 @@ const registerContract = async () => {
 
     await client.platform.contracts.publish(contract, identity)
     console.log('\nContract registered:\n\n', contract.toJSON())
+    console.log(`\nView on platform block explorer:\n\nhttps://platform-explorer.com/dataContract/${contract.toJSON().id}\n`)
   } catch (e) {
     console.error('Something went wrong:\n', e)
   } finally {
@@ -605,37 +587,20 @@ npm run registerContract
 Contract registered:
 
 ```js
-{
-  '$format_version': '0',
-  id: 'E8K4DhNTbBucds6mBTuzYK1v1YmU1DPBwPrrtknX5R3c',
-  config: {
-    '$format_version': '0',
-    canBeDeleted: false,
-    readonly: false,
-    keepsHistory: false,
-    documentsKeepHistoryContractDefault: false,
-    documentsMutableContractDefault: true,
-    requiresIdentityEncryptionBoundedKey: null,
-    requiresIdentityDecryptionBoundedKey: null
-  },
-  version: 1,
-  ownerId: 'FWZBvqN5M1M8MF7vUVMFc8QFM8uRwmnXBXnEFWJEmt8n',
-  schemaDefs: null,
-  documentSchemas: {
-    note: {
-      type: 'object',
-      properties: [Object],
-      additionalProperties: false
-    }
-  }
-}
+
 ```
 
 ```
-CONTRACT_ID=E8K4DhNTbBucds6mBTuzYK1v1YmU1DPBwPrrtknX5R3c
+CONTRACT_ID=""
 ```
+
+TODO: Screenshot of data contract in explorer
 
 https://platform-explorer.com/dataContract/E8K4DhNTbBucds6mBTuzYK1v1YmU1DPBwPrrtknX5R3c
+
+TODO: Screenshot the DATA_CONTRACT_CREATE transaction
+
+https://platform-explorer.com/transaction/50207C2F8A18B36F3332CF40EBB164A2230D9ECD6773612FE2D5F6429BC2E3D9
 
 Create a file called `retrieveContract.js`.
 
@@ -654,6 +619,7 @@ const retrieveContract = async () => {
   try {
     const contract = await client.platform.contracts.get(CONTRACT_ID)
     console.dir(contract.toJSON(), { depth: 5 })
+    console.log(`\nView on platform block explorer:\n\nhttps://platform-explorer.com/dataContract/${contract.toJSON().id}\n`)
   } catch (e) {
     console.error('Something went wrong:\n', e)
   } finally {
@@ -671,30 +637,7 @@ npm run retrieveContract
 ```
 
 ```js
-{
-  '$format_version': '0',
-  id: 'E8K4DhNTbBucds6mBTuzYK1v1YmU1DPBwPrrtknX5R3c',
-  config: {
-    '$format_version': '0',
-    canBeDeleted: false,
-    readonly: false,
-    keepsHistory: false,
-    documentsKeepHistoryContractDefault: false,
-    documentsMutableContractDefault: true,
-    requiresIdentityEncryptionBoundedKey: null,
-    requiresIdentityDecryptionBoundedKey: null
-  },
-  version: 1,
-  ownerId: 'FWZBvqN5M1M8MF7vUVMFc8QFM8uRwmnXBXnEFWJEmt8n',
-  schemaDefs: null,
-  documentSchemas: {
-    note: {
-      type: 'object',
-      properties: { message: { type: 'string', position: 0 } },
-      additionalProperties: false
-    }
-  }
-}
+
 ```
 
 Create a file called `updateContract.js`.
@@ -741,33 +684,18 @@ Run `updateContract` script.
 npm run updateContract
 ```
 
+TODO: Screenshot new schema tab
+
+https://platform-explorer.com/dataContract/BwDbiChaEw7i15R5Qgmi1dqYR4ayoBJxsxNHbBn3c8mb
+
+TODO: Screenshot transaction updating the document
+
+https://platform-explorer.com/transaction/B910AC54D6CC79F0D1B8AD3B551D312C873FA7B6064042B980E6BC502232351B
+
 Contract updated:
 
 ```js
-{
-  '$format_version': '0',
-  id: 'E8K4DhNTbBucds6mBTuzYK1v1YmU1DPBwPrrtknX5R3c',
-  config: {
-    '$format_version': '0',
-    canBeDeleted: false,
-    readonly: false,
-    keepsHistory: false,
-    documentsKeepHistoryContractDefault: false,
-    documentsMutableContractDefault: true,
-    requiresIdentityEncryptionBoundedKey: null,
-    requiresIdentityDecryptionBoundedKey: null
-  },
-  version: 2,
-  ownerId: 'FWZBvqN5M1M8MF7vUVMFc8QFM8uRwmnXBXnEFWJEmt8n',
-  schemaDefs: null,
-  documentSchemas: {
-    note: {
-      type: 'object',
-      properties: [Object],
-      additionalProperties: false
-    }
-  }
-}
+
 ```
 
 Add an `apps` object to the `client` options and pass the contract ID to enable `<contract name>.<contract document>` syntax while accessing contract documents (for example, `tutorialContract.note`).
@@ -777,7 +705,7 @@ Add an `apps` object to the `client` options and pass the contract ID to enable 
 
 import Dash from "dash"
 
-const { MNEMONIC, NETWORK, CONTRACT_ID } = process.env
+const { NETWORK, MNEMONIC, CONTRACT_ID } = process.env
 
 export const client = new Dash.Client({
   network: NETWORK,
@@ -823,6 +751,7 @@ const submitNoteDocument = async () => {
       replace: [],
       delete: [],
     }, identity)
+    console.log(`DOCUMENT_ID="${noteDocument.toJSON().$id}"`)
     console.log(noteDocument.toJSON())
   } catch (e) {
     console.error('Something went wrong:\n', e)
@@ -834,44 +763,16 @@ const submitNoteDocument = async () => {
 submitNoteDocument()
 ```
 
-TODO: Modify to console log `DOCUMENT_ID=FEr8g3vhRvkSgyJcdUQQUpvduQcFKsziN5YRwSHyrEbT`.
-
 ```bash
 npm run submitNoteDocument
 ```
 
+TODO: Screenshot of document creation and hello message
+
+https://platform-explorer.com/document/62VYDkrFQkYfybtFjsEqivVvpdWDs4qKkoPqhCYxqrT6
+
 ```js
-{
-  '$id': 'FEr8g3vhRvkSgyJcdUQQUpvduQcFKsziN5YRwSHyrEbT',
-  '$ownerId': 'FWZBvqN5M1M8MF7vUVMFc8QFM8uRwmnXBXnEFWJEmt8n',
-  message: 'Hello from ajcwebdev @ Tue, 09 Apr 2024 08:20:37 GMT',
-  '$revision': 1,
-  '$createdAt': null,
-  '$updatedAt': null,
-  '$createdAtBlockHeight': null,
-  '$updatedAtBlockHeight': null,
-  '$createdAtCoreBlockHeight': null,
-  '$updatedAtCoreBlockHeight': null,
-  '$dataContract': {
-    '$format_version': '0',
-    id: 'E8K4DhNTbBucds6mBTuzYK1v1YmU1DPBwPrrtknX5R3c',
-    config: {
-      '$format_version': '0',
-      canBeDeleted: false,
-      readonly: false,
-      keepsHistory: false,
-      documentsKeepHistoryContractDefault: false,
-      documentsMutableContractDefault: true,
-      requiresIdentityEncryptionBoundedKey: null,
-      requiresIdentityDecryptionBoundedKey: null
-    },
-    version: 3,
-    ownerId: 'FWZBvqN5M1M8MF7vUVMFc8QFM8uRwmnXBXnEFWJEmt8n',
-    schemaDefs: null,
-    documentSchemas: { note: [Object] }
-  },
-  '$type': 'note'
-}
+
 ```
 
 Create a file called `getDocuments.js`.
@@ -908,7 +809,6 @@ npm run getDocuments
 ```
 
 ```
-Hello again from ajcwebdev @ Tue, 09 Apr 2024 08:14:26 GMT
 Hello from ajcwebdev @ Tue, 09 Apr 2024 08:11:25 GMT
 ```
 
@@ -938,10 +838,11 @@ const updateNoteDocument = async () => {
 
     document.set(
       'message',
-      `Updated document final @ ${new Date().toUTCString()}`
+      `Hello from ajcwebdev again @ ${new Date().toUTCString()}`
     )
 
     await client.platform.documents.broadcast({ replace: [document] }, identity)
+    console.log('\nMessage: ', document.toJSON().message)
     console.log('\nDocument updated:\n\n', document.toJSON())
   } catch (e) {
     console.error('Something went wrong:\n', e)
@@ -959,40 +860,12 @@ Run `updateNoteDocument` script:
 npm run updateNoteDocument
 ```
 
+TODO: Screenshot transaction on platform explorer
+
 Document updated:
 
 ```js
-{
-  '$id': 'FEr8g3vhRvkSgyJcdUQQUpvduQcFKsziN5YRwSHyrEbT',
-  '$ownerId': 'FWZBvqN5M1M8MF7vUVMFc8QFM8uRwmnXBXnEFWJEmt8n',
-  message: 'Updated document @ Tue, 09 Apr 2024 08:39:01 GMT',
-  '$revision': 4,
-  '$createdAt': null,
-  '$updatedAt': null,
-  '$createdAtBlockHeight': null,
-  '$updatedAtBlockHeight': null,
-  '$createdAtCoreBlockHeight': null,
-  '$updatedAtCoreBlockHeight': null,
-  '$dataContract': {
-    '$format_version': '0',
-    id: 'E8K4DhNTbBucds6mBTuzYK1v1YmU1DPBwPrrtknX5R3c',
-    config: {
-      '$format_version': '0',
-      canBeDeleted: false,
-      readonly: false,
-      keepsHistory: false,
-      documentsKeepHistoryContractDefault: false,
-      documentsMutableContractDefault: true,
-      requiresIdentityEncryptionBoundedKey: null,
-      requiresIdentityDecryptionBoundedKey: null
-    },
-    version: 3,
-    ownerId: 'FWZBvqN5M1M8MF7vUVMFc8QFM8uRwmnXBXnEFWJEmt8n',
-    schemaDefs: null,
-    documentSchemas: { note: [Object] }
-  },
-  '$type': 'note'
-}
+
 ```
 
 Create a file called `deleteNoteDocument.js`.
@@ -1033,64 +906,21 @@ deleteNoteDocument()
 npm run deleteNoteDocument
 ```
 
+TODO: Screenshot of transaction on platform explorer
+
 Document deleted:
 
 ```js
-{
-  '$id': 'FEr8g3vhRvkSgyJcdUQQUpvduQcFKsziN5YRwSHyrEbT',
-  '$ownerId': 'FWZBvqN5M1M8MF7vUVMFc8QFM8uRwmnXBXnEFWJEmt8n',
-  message: 'Updated document @ Tue, 09 Apr 2024 08:39:01 GMT',
-  '$revision': 1,
-  '$createdAt': null,
-  '$updatedAt': null,
-  '$createdAtBlockHeight': null,
-  '$updatedAtBlockHeight': null,
-  '$createdAtCoreBlockHeight': null,
-  '$updatedAtCoreBlockHeight': null,
-  '$dataContract': {
-    '$format_version': '0',
-    id: 'E8K4DhNTbBucds6mBTuzYK1v1YmU1DPBwPrrtknX5R3c',
-    config: {
-      '$format_version': '0',
-      canBeDeleted: false,
-      readonly: false,
-      keepsHistory: false,
-      documentsKeepHistoryContractDefault: false,
-      documentsMutableContractDefault: true,
-      requiresIdentityEncryptionBoundedKey: null,
-      requiresIdentityDecryptionBoundedKey: null
-    },
-    version: 3,
-    ownerId: 'FWZBvqN5M1M8MF7vUVMFc8QFM8uRwmnXBXnEFWJEmt8n',
-    schemaDefs: null,
-    documentSchemas: { note: [Object] }
-  },
-  '$type': 'note'
-}
+
 ```
 
 ## Setup Backend Server with Express
 
+<!-- ### Setup Backend Server with Express -->
+
 ```bash
 npm i express cors
-mkdir api
 echo > api/server.js
-```
-
-TODO: Update Express server commands to use Node 20 features including `watch` and `env` flags.
-
-```json
-{
-  "scripts": {
-    "start:server": "node api/server",
-    "dev:server": "node api/server"
-  },
-  "dependencies": {
-    "cors": "^2.8.5",
-    "dash": "^3.24.4",
-    "express": "^4.18.2"
-  }
-}
 ```
 
 ```js
@@ -1098,7 +928,7 @@ TODO: Update Express server commands to use Node 20 features including `watch` a
 
 import express from 'express'
 import cors from 'cors'
-import { client } from '../client.js'
+import { client } from './client.js'
 
 const app = express()
 app.use(cors())
@@ -1123,7 +953,7 @@ app.listen(port, () => {
 ```
 
 ```bash
-npm run serve
+npm run express
 ```
 
 Open [`localhost:3001/name/streamtest20240409`](http://localhost:3001/name/streamtest20240409) or send a GET request with curl.
@@ -1132,75 +962,144 @@ Open [`localhost:3001/name/streamtest20240409`](http://localhost:3001/name/strea
 curl "http://localhost:3001/name/streamtest20240409"
 ```
 
-Old output, update later:
+TODO: Pretty print curl output with JSON
 
 ```json
-{
-  "$id":"DqeamRwhQE6HNzFvk63ZVTpwBm4AZAss1wv5E46iPkkv",
-  "$ownerId":"94uozwXwnuVGyXwYGd5Unzyy9sCTuvqJecVspxadhNo1",
-  "$revision":1,
-  "label":"ajcwebdevtest",
-  "normalizedLabel":"ajcwebdevtest",
-  "normalizedParentDomainName":"dash",
-  "preorderSalt":"u60YDYG8BUuBcWjfXUGbkTr08JiB8JaKBqmVda3P2WI=",
-  "records":{
-    "dashUniqueIdentityId":"94uozwXwnuVGyXwYGd5Unzyy9sCTuvqJecVspxadhNo1"
-  },
-  "subdomainRules":{
-    "allowSubdomains":false
-  },
-  "$protocolVersion":1,
-  "$type":"domain",
-  "$dataContractId":"GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec"
-}
+
 ```
 
 ## Create React App
 
-TODO: Use Next.js
+<!-- ### Create React App -->
+
+```bash
+npx create-next-app@latest next
+```
+
+Open `page.js` in `next/src/app`.
+
+```js
+// next/src/app/page.js
+
+const main = "flex flex-col items-center justify-between p-24"
+const header = "text-3xl"
+const pageContent = "z-10 max-w-5xl w-full items-center justify-between font-sans lg:flex"
+
+export default function Home() {
+  return (
+    <main className={main}>
+      <h1 className={header}>Next.js Dash Example</h1>
+      <div className={pageContent}>
+        <h2>Identity:</h2>
+      </div>
+    </main>
+  )
+}
+```
+
+```bash
+npm run dev
+```
+
+TODO: Screenshot localhost
 
 ### Setup React Project Structure
 
-`package.json`.
-
-```json
-
-```
+TODO: Figure out Montserrat (headers) and Open Sans (body) fonts 
 
 App component.
 
 ```js
-// src/App.jsx
+// next/src/app/page.js
+
+"use client"
 
 import { useEffect, useState } from 'react'
 
-function App() {
-  const [blockchainData, setBlockchainData] = useState(null)
+const main = "flex flex-col items-center justify-between p-24"
+const header = "text-3xl"
+const pageContent = "z-10 max-w-5xl w-full items-center justify-between font-sans lg:flex"
 
+export default function Home() {
+  const [blockchainData, setBlockchainData] = useState(null)
   useEffect(() => {
-    fetch('http://localhost:3001/name/streamtest20240409')
+    fetch('http://localhost:3001/name/streamtest20240410')
       .then(response => response.json())
       .then(data => setBlockchainData(data))
   }, [])
-
   return (
-    <>
-      <h1>Dash + React + Express</h1>
-      <pre>
-        {JSON.stringify(blockchainData, null, 2)}
-      </pre>
-    </>
+    <main className={main}>
+      <h1 className={header}>Next.js Dash Example</h1>
+      <div className={pageContent}>
+        <h2>Identity:</h2>
+        <pre>
+          {JSON.stringify(blockchainData, null, 2)}
+        </pre>
+      </div>
+    </main>
   )
 }
-
-export default App
 ```
 
 ```bash
-npm run dev:client
+npm run dev
 ```
 
+TODO: Update screenshot with Next
+
 ### Add Fetch Button to React App
+
+```js
+// next/src/app/page.js
+
+"use client"
+
+import { useEffect, useState } from 'react'
+
+const main = "flex flex-col items-center justify-between p-24"
+const header = "text-3xl"
+const pageContent = "z-10 max-w-5xl w-full items-center justify-between font-sans lg:flex"
+
+export default function Home() {
+  const [blockchainData, setBlockchainData] = useState()
+  const [triggerFetch, setTriggerFetch] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const fetchData = () => {
+    setIsLoading(true) // Set loading to true when fetch begins
+    fetch('http://localhost:3001/name/streamtest20240409')
+      .then(response => response.json())
+      .then(data => {
+        setBlockchainData(data)
+        setIsLoading(false) // Set loading to false when fetch completes
+      })
+  }
+
+  useEffect(() => {
+    if (triggerFetch) {
+      fetchData()
+      setTriggerFetch(false) // Reset trigger
+    }
+  }, [triggerFetch])
+  return (
+    <main className={main}>
+      <h1 className={header}>Next.js Dash Example</h1>
+      <div className={pageContent}>
+        <h2>Identity:</h2>
+        <button onClick={() => setTriggerFetch(true)}>
+          Fetch Data
+        </button>
+        <pre>
+          {isLoading
+            ? 'Loading...'
+            : JSON.stringify(blockchainData, null, 2)
+          }
+        </pre>
+      </div>
+    </main>
+  )
+}
+```
 
 ```jsx
 // src/App.jsx
@@ -1251,7 +1150,7 @@ function App() {
 export default App
 ```
 
-TODO: Update screenshot and fix CSS
+TODO: Update screenshot with Next and fetch button
 
 ![06 - react-frontend-with-express](https://ajc.pics/dash-examples/06-react-frontend-with-express.webp)
 
