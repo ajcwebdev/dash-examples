@@ -17,6 +17,7 @@ const submitNoteDocument = async () => {
       replace: [],
       delete: [],
     }, identity)
+    console.log(`DOCUMENT_ID="${noteDocument.toJSON().$id}"`)
     console.log(noteDocument.toJSON())
   } catch (e) {
     console.error('Something went wrong:\n', e)

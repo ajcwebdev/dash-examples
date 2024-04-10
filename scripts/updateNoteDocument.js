@@ -15,10 +15,11 @@ const updateNoteDocument = async () => {
 
     document.set(
       'message',
-      `Updated document final @ ${new Date().toUTCString()}`
+      `Hello from ajcwebdev again @ ${new Date().toUTCString()}`
     )
 
     await client.platform.documents.broadcast({ replace: [document] }, identity)
+    console.log('\nMessage: ', document.toJSON().message)
     console.log('\nDocument updated:\n\n', document.toJSON())
   } catch (e) {
     console.error('Something went wrong:\n', e)
