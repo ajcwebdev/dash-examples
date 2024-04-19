@@ -19,6 +19,7 @@ const registerContract = async () => {
 
     await client.platform.contracts.publish(contract, identity)
     console.log('\nContract registered:\n\n', contract.toJSON())
+    console.log(`\nView on platform block explorer:\n\nhttps://platform-explorer.com/dataContract/${contract.toJSON().id}\n`)
   } catch (e) {
     console.error('Something went wrong:\n', e)
   } finally {

@@ -477,7 +477,7 @@ npm run registerName
 ```
 
 ```
-LABEL="streamtest20240409"
+LABEL=""
 ```
 
 https://platform-explorer.com/document/Aaun8ywpu9xNJiuVU8VxMoMi31GZkC1yuPrLSuJHzfWy
@@ -937,11 +937,14 @@ app.get('/name/:identityName', async (req, res) => {
   try {
     const name = req.params.identityName
     const result = await client.platform.names.resolve(`${name}.dash`)
-    res.json(result.toJSON())
+    if (result !== null) {
+      res.json(result.toJSON())
+    } else {
+      res.status(404).send(`No identity found with the name: ${name}.dash`)
+    }
   } catch (error) {
+    console.error(error)
     res.status(500).send('Something went wrong:\n' + error)
-  } finally {
-    client.disconnect()
   }
 })
 
@@ -949,6 +952,12 @@ const port = process.env.PORT || 3001
 
 app.listen(port, () => {
   console.log("Running on localhost:", port)
+})
+
+process.on('SIGINT', async () => {
+  console.log('Disconnecting Dash client...')
+  await client.disconnect()
+  process.exit(0)
 })
 ```
 

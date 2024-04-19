@@ -1,8 +1,8 @@
-// api/express/server.js
+// api/server.js
 
 import express from 'express'
 import cors from 'cors'
-import { client } from '../client.js'
+import { client } from './client.js'
 
 const app = express()
 app.use(cors())

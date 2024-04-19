@@ -12,6 +12,8 @@ async function registerName() {
       `${LABEL}.dash`, { dashUniqueIdentityId }, identity
     )
     console.log("LABEL=" + JSON.stringify(nameRegistration.toJSON().label))
+    // TODO: Test this works
+    // console.log(`\nView on block explorer: https://platform-explorer.com/document/${nameRegistration.toJSON().$id}\n`)
   } catch (error) {
     console.error("Something went wrong:\n", error)
   } finally {
