@@ -21,7 +21,7 @@
     "getDocuments": "node --env-file=.env scripts/getDocuments",
     "updateNoteDocument": "node --env-file=.env scripts/updateNoteDocument",
     "deleteNoteDocument": "node --env-file=.env scripts/deleteNoteDocument",
-    "express": "node --env-file=.env --watch api/express/server"
+    "express": "node --env-file=.env --watch api/server"
   },
   "dependencies": {
     "cors": "^2.8.5",
