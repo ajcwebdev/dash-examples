@@ -60,13 +60,13 @@ Copy `WALLET_ADDRESS` and `MNEMONIC` and paste them into `.env`.
 ### Start Development Server
 
 ```bash
-npm run serve
+npm run express
 ```
 
-Run a curl command on the URL `http://localhost:3001/name/ajcwebdevtest`.
+Run a curl command on the URL with your identity name `http://localhost:3001/name/IDENTITY_NAME`.
 
 ```bash
-curl "http://localhost:3001/name/ajcwebdevtest"
+curl "http://localhost:3001/name/IDENTITY_NAME"
 ```
 
 This will output:
