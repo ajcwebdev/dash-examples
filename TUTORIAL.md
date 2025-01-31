@@ -45,12 +45,12 @@ Here's an architectural overview of the Dash Platform to get a better sense of h
 Requirement: Node v20 or higher
 
 ```bash wrap=false
-mkdir dash-examples
-cd dash-examples
-npm init -y
-npm pkg set type="module"
-npm i dash@4.0.0-rc.2
-echo > .gitignore
+mkdir dash-examples && \
+  cd dash-examples && \
+  npm init -y && \
+  npm pkg set type="module" && \
+  npm i dash@4.0.0-rc.2 && \
+  echo > .gitignore
 ```
 
 Add the following to `.gitignore`:
@@ -62,27 +62,32 @@ node_modules
 dist
 ```
 
+Create a `README.md` file for any feedback you have while going through the tutorial:
+
+```bash
+echo '## Feedback about Dash and this tutorial' > README.md
+```
+
 We'll create each script file individually throughout the tutorial but for the sake of simplifying your life while following along with this tutorial, I'd recommend adding all of the Node scripts that will be implemented by the end of the tutorial.
 
 Open `package.json` and include the following scripts:
 
-```json wrap=false
-"scripts": {
-  "createWallet": "node --env-file=.env --no-warnings scripts/createWallet",
-  "createIdentity": "node --env-file=.env --no-warnings scripts/createIdentity",
-  "retrieveIdentities": "node --env-file=.env --no-warnings scripts/retrieveIdentities",
-  "topUpIdentities": "node --env-file=.env --no-warnings scripts/topUpIdentities",
-  "registerName": "node --env-file=.env --no-warnings scripts/registerName",
-  "retrieveName": "node --env-file=.env --no-warnings scripts/retrieveName",
-  "registerContract": "node --env-file=.env --no-warnings scripts/registerContract",
-  "retrieveContract": "node --env-file=.env --no-warnings scripts/retrieveContract",
-  "updateContract": "node --env-file=.env --no-warnings scripts/updateContract",
-  "submitNoteDocument": "node --env-file=.env --no-warnings scripts/submitNoteDocument",
-  "getDocuments": "node --env-file=.env --no-warnings scripts/getDocuments",
-  "updateNoteDocument": "node --env-file=.env --no-warnings scripts/updateNoteDocument",
-  "deleteNoteDocument": "node --env-file=.env --no-warnings scripts/deleteNoteDocument",
-  "express": "node --env-file=.env --no-warnings --watch api/server"
-},
+```bash wrap=false
+npm pkg set \
+  'scripts.createWallet=node --env-file=.env --no-warnings scripts/01-createWallet' \
+  'scripts.createIdentity=node --env-file=.env --no-warnings scripts/02-createIdentity' \
+  'scripts.retrieveIdentities=node --env-file=.env --no-warnings scripts/03-retrieveIdentities' \
+  'scripts.topUpIdentities=node --env-file=.env --no-warnings scripts/04-topUpIdentities' \
+  'scripts.registerName=node --env-file=.env --no-warnings scripts/05-registerName' \
+  'scripts.retrieveName=node --env-file=.env --no-warnings scripts/06-retrieveName' \
+  'scripts.registerContract=node --env-file=.env --no-warnings scripts/07-registerContract' \
+  'scripts.retrieveContract=node --env-file=.env --no-warnings scripts/08-retrieveContract' \
+  'scripts.updateContract=node --env-file=.env --no-warnings scripts/09-updateContract' \
+  'scripts.submitNoteDocument=node --env-file=.env --no-warnings scripts/10-submitNoteDocument' \
+  'scripts.getDocuments=node --env-file=.env --no-warnings scripts/11-getDocuments' \
+  'scripts.updateNoteDocument=node --env-file=.env --no-warnings scripts/12-updateNoteDocument' \
+  'scripts.deleteNoteDocument=node --env-file=.env --no-warnings scripts/13-deleteNoteDocument' \
+  'scripts.express=node --env-file=.env --no-warnings --watch api/server'
 ```
 
 ### Initialize Dash Client
@@ -106,6 +111,9 @@ const { NETWORK } = process.env
 
 export const client = new Dash.Client({
   network: NETWORK,
+  // Picking a known good ip address can sometimes help reliability
+  // Uncomment the next line if network is throwing errors
+  // dapiAddresses: ["44.227.137.77:1443"],
   wallet: {
     offlineMode: true,
   },
@@ -127,10 +135,10 @@ Because we haven't created a wallet yet, `mnemonic` is set to `null` to indicate
 
 ## Create Wallet and Identity
 
-Create a file called `createWallet.js`.
+Create a file called `01-createWallet.js`.
 
 ```bash wrap=false
-echo > scripts/createWallet.js
+echo > scripts/01-createWallet.js
 ```
 
 We'll use three functions to create a wallet:
@@ -140,7 +148,7 @@ We'll use three functions to create a wallet:
 - `getUnusedAddress()` to create a new address.
 
 ```js wrap=false
-// scripts/createWallet.js
+// scripts/01-createWallet.js
 
 import { log, err, client, wallet } from '../api/client.js'
 
@@ -179,7 +187,7 @@ Copy these and place them in your `.env`. We'll do the same throughout the rest 
 
 ### Add Funds to Wallet with Testnet Faucet
 
-Send test funds to the "unused address" from the console output using Dash's [testnet faucet](http://faucet.testnet.networks.dash.org). Wait for the funds to be confirmed before trying to use them, it may take a few minutes. You can check the status of confirmations with the [Dash block explorer](http://insight.testnet.networks.dash.org:3001/insight/).
+Send test funds to the "unused address" from the console output using a Dash testnet faucet, such as [Dash Core Group](http://faucet.testnet.networks.dash.org/)'s (sometimes buggy) or [CrowdNode](http://faucet.test.dash.crowdnode.io/)'s. Wait for the funds to be confirmed before trying to use them, it may take a few minutes. You can check the status of confirmations with the [Dash block explorer](http://insight.testnet.networks.dash.org:3001/insight/).
 
 Search for your wallet address (`yfvkghuK1fbDc7GBeadfMa47d9WaBpLxij` in my case) to see your balance and list of transactions:
 
@@ -206,6 +214,9 @@ const { NETWORK, MNEMONIC } = process.env
 
 export const client = new Dash.Client({
   network: NETWORK,
+  // Picking a known good ip address can sometimes help reliability
+  // Uncomment the next line if network is throwing errors
+  // dapiAddresses: ["44.227.137.77:1443"],
   wallet: {
     mnemonic: MNEMONIC,
     unsafeOptions: {
@@ -222,16 +233,16 @@ export const platform = client.platform
 export const wallet = client.wallet
 ```
 
-Create a file called `createIdentity.js`.
+Create a file called `02-createIdentity.js`.
 
 ```bash wrap=false
-echo > scripts/createIdentity.js
+echo > scripts/02-createIdentity.js
 ```
 
 To create an identity, we'll run the `identities.register()` function.
 
 ```js wrap=false
-// scripts/createIdentity.js
+// scripts/02-createIdentity.js
 
 import { log, err, client, platform } from '../api/client.js'
 
@@ -257,7 +268,7 @@ Run the `createIdentity` script.
 npm run createIdentity
 ```
 
-Add the following output to `.env`:
+***Note: Add the following output to `.env`:***
 
 ```bash wrap=false
 IDENTITY_ID="Atx8CpmKMgDvxWXrRfgCJ44GmUSPiB1qXkfoyotttHd"
@@ -270,16 +281,16 @@ Earlier, we saw how to view our transactions on the Dash block explorer. For ope
 
 ![04-platform-explorer-identity-endpoint](https://ajc.pics/2024/04/01/first-look-dash/04-platform-explorer-identity-endpoint.webp)
 
-Create a file called `retrieveIdentities.js`.
+Create a file called `03-retrieveIdentities.js`.
 
 ```bash wrap=false
-echo > scripts/retrieveIdentities.js
+echo > scripts/03-retrieveIdentities.js
 ```
 
 `getIdentityIds()` with return your identity ID's which can be passed to `identities.get()`.
 
 ```js wrap=false
-// scripts/retrieveIdentities.js
+// scripts/03-retrieveIdentities.js
 
 import { log, err, client, platform } from '../api/client.js'
 
@@ -292,7 +303,7 @@ async function retrieveIdentities() {
     for (const id of identityIds) {
       const identity = await platform.identities.get(id)
       log(`\nIdentity ID: ${id}`)
-      log(`  - Balance: ${identity.balance}`)
+      log(`  - Balance: ${identity.balance} credits`)
     }
   } catch (error) {
     err('Something went wrong:\n', error)
@@ -319,16 +330,16 @@ Identity ID: 6vx4nFiHFm7NVWDUFeKPEKxmYBX3heTcUCdgC16jNdpK
 
 When an Identity is created, a special transaction transforms Dash into credits which are used to interact with Dash Platform. 1 DASH is equal to 100,000,000 Duffs (Dash's version of the [Satoshi](https://www.fool.com/terms/s/satoshi/)) and 100 million Duffs is equal to 100 billion credits. Since interacting with Dash Platform applications decreases your credit balance, at a certain point you'll need to topup the balance by converting some Dash to credits.
 
-Create a file called `topUpIdentities.js`.
+Create a file called `04-topUpIdentities.js`.
 
 ```bash wrap=false
-echo > scripts/topUpIdentities.js
+echo > scripts/04-topUpIdentities.js
 ```
 
 `getIdentityIds()` will be used again and the ID's will be passed to `identities.topUp()`.
 
 ```js wrap=false
-// scripts/topUpIdentities.js
+// scripts/04-topUpIdentities.js
 
 import { log, err, client, platform } from '../api/client.js'
 
@@ -370,23 +381,22 @@ IDENTITY_CREDIT_BALANCE for ID 6vx4nFiHFm7NVWDUFeKPEKxmYBX3heTcUCdgC16jNdpK: 874
 
 ### Register and Retrieve Name
 
-Create a file called `registerName.js`.
+Create a file called `05-registerName.js`.
 
 ```bash wrap=false
-echo > scripts/registerName.js
+echo > scripts/05-registerName.js
 ```
 
 Create a `LABEL` in `.env` with your desired name. Replace `YOUR-NAME-HERE` with your name. See the [implementation details for naming constraints](https://docs.dash.org/projects/platform/en/stable/docs/explanations/dpns.html#implementation).
 
 ```bash wrap=false
-LABEL="YOUR-NAME-HERE"
-# echo '\nLABEL="YOUR-NAME-HERE"' >> .env
+LABEL="<YOUR-LABEL-HERE>"
 ```
 
-Add the following to `scripts/registerName.js`.
+Add the following to `05-registerName.js`.
 
 ```js wrap=false
-// scripts/registerName.js
+// scripts/05-registerName.js
 
 import { log, err, client, platform } from '../api/client.js'
 
@@ -395,10 +405,9 @@ const { IDENTITY_ID, LABEL } = process.env
 async function registerName() {
   try {
     const identity = await platform.identities.get(IDENTITY_ID)
-    const identityId = await identity.getId()
     const nameRegistration = await platform.names.register(
       `${LABEL}.dash`,
-      { identity: identityId },
+      { identity: IDENTITY_ID },
       identity
     )
 
@@ -430,16 +439,16 @@ View on block explorer: [testnet.platform-explorer.com/document/Ax2Psritj8p6cjkP
 
 ![05-platform-explorer-document-endpoint](https://ajc.pics/2024/04/01/first-look-dash/05-platform-explorer-document-endpoint.webp)
 
-Create a file called `retrieveName.js`.
+Create a file called `06-retrieveName.js`.
 
 ```bash wrap=false
-echo > scripts/retrieveName.js
+echo > scripts/06-retrieveName.js
 ```
 
 Pass your name to `platform.names.resolve()`.
 
 ```js wrap=false
-// scripts/retrieveName.js
+// scripts/06-retrieveName.js
 
 import { log, err, client, platform } from '../api/client.js'
 
@@ -530,16 +539,16 @@ You can create Data Contracts through an online user interface at [dashpay.io](h
 
 ### Register, Retrieve, and Update Contract
 
-Create a file called `registerContract.js`.
+Create a file called `07-registerContract.js`.
 
 ```bash wrap=false
-echo > scripts/registerContract.js
+echo > scripts/07-registerContract.js
 ```
 
 `contracts.create()` will take your identity and a spec for the contract. In this case the contract will be a simple string message.
 
 ```js wrap=false
-// scripts/registerContract.js
+// scripts/07-registerContract.js
 
 import { log, err, client, platform } from '../api/client.js'
 
@@ -560,7 +569,6 @@ const registerContract = async () => {
       contractDocuments,
       identity
     )
-    log("\nCONTRACT_ID=" + `"${contract.toJSON().id}"`)
 
     await platform.contracts.publish(
       contract,
@@ -568,6 +576,7 @@ const registerContract = async () => {
     )
     log('\nContract registered:\n\n', JSON.stringify(contract, null, 2))
     log(`\nView on platform block explorer:\n\nhttps://testnet.platform-explorer.com/dataContract/${contract.toJSON().id}\n`)
+    log("\nCONTRACT_ID=" + `"${contract.toJSON().id}"`)
   } catch (e) {
     err('Something went wrong:\n', e)
   } finally {
@@ -584,7 +593,7 @@ Run the `registerContract` script:
 npm run registerContract
 ```
 
-Add the following output to `.env`:
+***Note: Add the following output to `.env`:***
 
 ```bash wrap=false
 CONTRACT_ID="H4wBXB2RCu58EP7H7gGyehVmD7ij5MLZkAXW9SVUGPYb"
@@ -622,16 +631,16 @@ Contract registered:
 
 View on platform block explorer: [testnet.platform-explorer.com/dataContract/4FwqAJwrJsnrxG9BcufeXzJMEoaqq3YASjCezxsUcrso](https://testnet.platform-explorer.com/dataContract/4FwqAJwrJsnrxG9BcufeXzJMEoaqq3YASjCezxsUcrso)
 
-Create a file called `retrieveContract.js`.
+Create a file called `08-retrieveContract.js`.
 
 ```bash wrap=false
-echo > scripts/retrieveContract.js
+echo > scripts/08-retrieveContract.js
 ```
 
 Pass your contract ID to `contracts.get()`.
 
 ```js wrap=false
-// scripts/retrieveContract.js
+// scripts/08-retrieveContract.js
 
 import { log, err, dir, client, platform } from '../api/client.js'
 
@@ -691,16 +700,16 @@ Output:
 
 View on platform block explorer: [testnet.platform-explorer.com/dataContract/4FwqAJwrJsnrxG9BcufeXzJMEoaqq3YASjCezxsUcrso](https://testnet.platform-explorer.com/dataContract/4FwqAJwrJsnrxG9BcufeXzJMEoaqq3YASjCezxsUcrso)
 
-Create a file called `updateContract.js`.
+Create a file called `09-updateContract.js`.
 
 ```bash wrap=false
-echo > scripts/updateContract.js
+echo > scripts/09-updateContract.js
 ```
 
 Use your identity ID and contract ID along with `setDocumentSchema()` and `contracts.update()`.
 
 ```js wrap=false
-// scripts/updateContract.js
+// scripts/09-updateContract.js
 
 import { log, err, client, platform } from '../api/client.js'
 
@@ -790,6 +799,9 @@ const { NETWORK, MNEMONIC, CONTRACT_ID } = process.env
 
 export const client = new Dash.Client({
   network: NETWORK,
+  // Picking a known good ip address can sometimes help reliability
+  // Uncomment the next line if network is throwing errors
+  // dapiAddresses: ["44.227.137.77:1443"],
   wallet: {
     mnemonic: MNEMONIC,
     unsafeOptions: {
@@ -816,13 +828,13 @@ export const wallet = client.wallet
 Create a file called `submitNoteDocument.js`.
 
 ```bash wrap=false
-echo > scripts/submitNoteDocument.js
+echo > scripts/10-submitNoteDocument.js
 ```
 
-Add the following to `scripts/submitNoteDocument.js`.
+Add the following to `10-submitNoteDocument.js`.
 
 ```js wrap=false
-// scripts/submitNoteDocument.js
+// scripts/10-submitNoteDocument.js
 
 import { log, err, client, platform } from '../api/client.js'
 
@@ -846,8 +858,8 @@ const submitNoteDocument = async () => {
       identity
     )
 
-    log(`DOCUMENT_ID="${noteDocument.toJSON().$id}"`)
     log(`${JSON.stringify(noteDocument, null, 2)}`)
+    log(`DOCUMENT_ID="${noteDocument.toJSON().$id}"`)
   } catch (e) {
     err('Something went wrong:\n', e)
   } finally {
@@ -864,7 +876,7 @@ Run the `submitNoteDocument` script.
 npm run submitNoteDocument
 ```
 
-Add the following to `.env`:
+***Note: Add the following to `.env`:***
 
 ```bash wrap=false
 DOCUMENT_ID="679YJYmZTRMLzmuVv2nvcMieid3WD3J4R29NKiafd3pd"
@@ -925,16 +937,16 @@ Note document output:
 }
 ```
 
-Create a file called `getDocuments.js`.
+Create a file called `11-getDocuments.js`.
 
 ```bash wrap=false
-echo > scripts/getDocuments.js
+echo > scripts/11-getDocuments.js
 ```
 
-Add the following to `scripts/getDocuments.js`.
+Add the following to `11-getDocuments.js`.
 
 ```js wrap=false
-// scripts/getDocuments.js
+// scripts/11-getDocuments.js
 
 import { log, err, client, platform } from '../api/client.js'
 
@@ -973,16 +985,16 @@ Hello from ajcwebdev20250128 @ Fri, 31 Jan 2025 00:30:52 GMT
 
 ### Update and Delete Documents
 
-Create a file called `updateNoteDocument.js`.
+Create a file called `12-updateNoteDocument.js`.
 
 ```bash wrap=false
-echo > scripts/updateNoteDocument.js
+echo > scripts/12-updateNoteDocument.js
 ```
 
-Add the following to `scripts/updateNoteDocument.js`.
+Add the following to `12-updateNoteDocument.js`.
 
 ```js wrap=false
-// scripts/updateNoteDocument.js
+// scripts/12-updateNoteDocument.js
 
 import { log, err, client, platform } from '../api/client.js'
 
@@ -1087,16 +1099,16 @@ Document updated:
 }
 ```
 
-Now that we can create, read, and update our notes, all we have left to do is delete our notes. Create a file called `deleteNoteDocument.js`.
+Now that we can create, read, and update our notes, all we have left to do is delete our notes. Create a file called `13-deleteNoteDocument.js`.
 
 ```bash wrap=false
-echo > scripts/deleteNoteDocument.js
+echo > scripts/13-deleteNoteDocument.js
 ```
 
-Add the following to `scripts/deleteNoteDocument.js`.
+Add the following to `13-deleteNoteDocument.js`.
 
 ```js wrap=false
-// scripts/deleteNoteDocument.js
+// scripts/13-deleteNoteDocument.js
 
 import { log, err, client, platform } from '../api/client.js'
 
@@ -1246,10 +1258,10 @@ Start the server with the following command:
 npm run express
 ```
 
-Open `localhost:3001/name/YOUR-NAME-HERE` or send a GET request with curl.
+Open `localhost:3001/name/<LABEL>` (with your label instead of `<LABEL>`) or send a GET request with curl.
 
 ```bash wrap=false
-curl "http://localhost:3001/name/YOUR-NAME-HERE" -s | json_pp
+curl "http://localhost:3001/name/<LABEL>" -s | json_pp
 ```
 
 ## Create Next App
