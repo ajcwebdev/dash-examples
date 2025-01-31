@@ -45,12 +45,12 @@ Here's an architectural overview of the Dash Platform to get a better sense of h
 Requirement: Node v20 or higher
 
 ```bash wrap=false
-mkdir dash-examples
-cd dash-examples
-npm init -y
-npm pkg set type="module"
-npm i dash@4.0.0-dev.16
-echo > .gitignore
+mkdir dash-examples && \
+  cd dash-examples && \
+  npm init -y && \
+  npm pkg set type="module" && \
+  npm i dash@4.0.0-rc.2 && \
+  echo > .gitignore
 ```
 
 Add the following to `.gitignore`:
@@ -62,27 +62,32 @@ node_modules
 dist
 ```
 
+Create a `README.md` file for any feedback you have while going through the tutorial:
+
+```bash
+echo '## Feedback about Dash and this tutorial' > README.md
+```
+
 We'll create each script file individually throughout the tutorial but for the sake of simplifying your life while following along with this tutorial, I'd recommend adding all of the Node scripts that will be implemented by the end of the tutorial.
 
 Open `package.json` and include the following scripts:
 
-```json wrap=false
-"scripts": {
-  "createWallet": "node --env-file=.env --no-warnings scripts/createWallet",
-  "createIdentity": "node --env-file=.env --no-warnings scripts/createIdentity",
-  "retrieveIdentities": "node --env-file=.env --no-warnings scripts/retrieveIdentities",
-  "topUpIdentities": "node --env-file=.env --no-warnings scripts/topUpIdentities",
-  "registerName": "node --env-file=.env --no-warnings scripts/registerName",
-  "retrieveName": "node --env-file=.env --no-warnings scripts/retrieveName",
-  "registerContract": "node --env-file=.env --no-warnings scripts/registerContract",
-  "retrieveContract": "node --env-file=.env --no-warnings scripts/retrieveContract",
-  "updateContract": "node --env-file=.env --no-warnings scripts/updateContract",
-  "submitNoteDocument": "node --env-file=.env --no-warnings scripts/submitNoteDocument",
-  "getDocuments": "node --env-file=.env --no-warnings scripts/getDocuments",
-  "updateNoteDocument": "node --env-file=.env --no-warnings scripts/updateNoteDocument",
-  "deleteNoteDocument": "node --env-file=.env --no-warnings scripts/deleteNoteDocument",
-  "express": "node --env-file=.env --no-warnings --watch api/server"
-},
+```bash wrap=false
+npm pkg set \
+  'scripts.createWallet=node --env-file=.env --no-warnings scripts/01-createWallet' \
+  'scripts.createIdentity=node --env-file=.env --no-warnings scripts/02-createIdentity' \
+  'scripts.retrieveIdentities=node --env-file=.env --no-warnings scripts/03-retrieveIdentities' \
+  'scripts.topUpIdentities=node --env-file=.env --no-warnings scripts/04-topUpIdentities' \
+  'scripts.registerName=node --env-file=.env --no-warnings scripts/05-registerName' \
+  'scripts.retrieveName=node --env-file=.env --no-warnings scripts/06-retrieveName' \
+  'scripts.registerContract=node --env-file=.env --no-warnings scripts/07-registerContract' \
+  'scripts.retrieveContract=node --env-file=.env --no-warnings scripts/08-retrieveContract' \
+  'scripts.updateContract=node --env-file=.env --no-warnings scripts/09-updateContract' \
+  'scripts.submitNoteDocument=node --env-file=.env --no-warnings scripts/10-submitNoteDocument' \
+  'scripts.getDocuments=node --env-file=.env --no-warnings scripts/11-getDocuments' \
+  'scripts.updateNoteDocument=node --env-file=.env --no-warnings scripts/12-updateNoteDocument' \
+  'scripts.deleteNoteDocument=node --env-file=.env --no-warnings scripts/13-deleteNoteDocument' \
+  'scripts.express=node --env-file=.env --no-warnings --watch api/server'
 ```
 
 ### Initialize Dash Client
@@ -106,10 +111,20 @@ const { NETWORK } = process.env
 
 export const client = new Dash.Client({
   network: NETWORK,
+  // Picking a known good ip address can sometimes help reliability
+  // Uncomment the next line if network is throwing errors
+  // dapiAddresses: ["44.227.137.77:1443"],
   wallet: {
     offlineMode: true,
   },
 })
+
+export const log = console.log
+export const err = console.error
+export const dir = console.dir
+
+export const platform = client.platform
+export const wallet = client.wallet
 ```
 
 Because we haven't created a wallet yet, `mnemonic` is set to `null` to indicate we want a new wallet to be generated.
@@ -120,10 +135,10 @@ Because we haven't created a wallet yet, `mnemonic` is set to `null` to indicate
 
 ## Create Wallet and Identity
 
-Create a file called `createWallet.js`.
+Create a file called `01-createWallet.js`.
 
 ```bash wrap=false
-echo > scripts/createWallet.js
+echo > scripts/01-createWallet.js
 ```
 
 We'll use three functions to create a wallet:
@@ -133,20 +148,20 @@ We'll use three functions to create a wallet:
 - `getUnusedAddress()` to create a new address.
 
 ```js wrap=false
-// scripts/createWallet.js
+// scripts/01-createWallet.js
 
-import { client } from '../api/client.js'
+import { log, err, client, wallet } from '../api/client.js'
 
 async function createWallet() {
   try {
     const walletAccount = await client.getWalletAccount()
-    const mnemonic = client.wallet.exportWallet()
+    const mnemonic = wallet.exportWallet()
     const { address } = walletAccount.getUnusedAddress()
 
-    console.log("WALLET_ADDRESS=" + `"${address}"`)
-    console.log("MNEMONIC=" + `"${mnemonic}"`)
+    log("WALLET_ADDRESS=" + `"${address}"`)
+    log("MNEMONIC=" + `"${mnemonic}"`)
   } catch (error) {
-    console.error('Something went wrong:\n', error)
+    err('Something went wrong:\n', error)
   } finally {
     client.disconnect()
   }
@@ -164,15 +179,15 @@ npm run createWallet
 The output will include our two environment variables:
 
 ```bash wrap=false
-WALLET_ADDRESS="yZpzgtx9H56zKuxu2DSejXXesFps4XYbRD"
-MNEMONIC="tooth add craft since marine spin lunar announce blade search avocado couple"
+WALLET_ADDRESS="yVtCv413ByXiRxkixsj4M2LR6FyrJzVYzL"
+MNEMONIC="exile slab craft fade august tape length various borrow taxi bulb abuse"
 ```
 
 Copy these and place them in your `.env`. We'll do the same throughout the rest of this tutorial.
 
 ### Add Funds to Wallet with Testnet Faucet
 
-Send test funds to the "unused address" from the console output using Dash's [testnet faucet](http://faucet.testnet.networks.dash.org). Wait for the funds to be confirmed before trying to use them, it may take a few minutes. You can check the status of confirmations with the [Dash block explorer](http://insight.testnet.networks.dash.org:3001/insight/).
+Send test funds to the "unused address" from the console output using a Dash testnet faucet, such as [Dash Core Group](http://faucet.testnet.networks.dash.org/)'s (sometimes buggy) or [CrowdNode](http://faucet.test.dash.crowdnode.io/)'s. Wait for the funds to be confirmed before trying to use them, it may take a few minutes. You can check the status of confirmations with the [Dash block explorer](http://insight.testnet.networks.dash.org:3001/insight/).
 
 Search for your wallet address (`yfvkghuK1fbDc7GBeadfMa47d9WaBpLxij` in my case) to see your balance and list of transactions:
 
@@ -199,6 +214,9 @@ const { NETWORK, MNEMONIC } = process.env
 
 export const client = new Dash.Client({
   network: NETWORK,
+  // Picking a known good ip address can sometimes help reliability
+  // Uncomment the next line if network is throwing errors
+  // dapiAddresses: ["44.227.137.77:1443"],
   wallet: {
     mnemonic: MNEMONIC,
     unsafeOptions: {
@@ -206,28 +224,36 @@ export const client = new Dash.Client({
     },
   },
 })
+
+export const log = console.log
+export const err = console.error
+export const dir = console.dir
+
+export const platform = client.platform
+export const wallet = client.wallet
 ```
 
-Create a file called `createIdentity.js`.
+Create a file called `02-createIdentity.js`.
 
 ```bash wrap=false
-echo > scripts/createIdentity.js
+echo > scripts/02-createIdentity.js
 ```
 
 To create an identity, we'll run the `identities.register()` function.
 
 ```js wrap=false
-// scripts/createIdentity.js
+// scripts/02-createIdentity.js
 
-import { client } from '../api/client.js'
+import { log, err, client, platform } from '../api/client.js'
 
 async function createIdentity() {
   try {
-    const identity = await client.platform.identities.register()
-    console.log("IDENTITY_ID=" + `"${identity.toJSON().id}"`)
-    console.log(`\nView on platform block explorer: https://platform-explorer.com/identity/${identity.toJSON().id}\n`)
+    const identity = await platform.identities.register()
+
+    log("IDENTITY_ID=" + `"${identity.toJSON().id}"`)
+    log(`\nView on platform block explorer: https://testnet.platform-explorer.com/identity/${identity.toJSON().id}\n`)
   } catch (error) {
-    console.error('Something went wrong:\n', error)
+    err('Something went wrong:\n', error)
   } finally {
     client.disconnect()
   }
@@ -242,45 +268,45 @@ Run the `createIdentity` script.
 npm run createIdentity
 ```
 
-Output:
+***Note: Add the following output to `.env`:***
 
 ```bash wrap=false
-IDENTITY_ID="6vx4nFiHFm7NVWDUFeKPEKxmYBX3heTcUCdgC16jNdpK"
+IDENTITY_ID="Atx8CpmKMgDvxWXrRfgCJ44GmUSPiB1qXkfoyotttHd"
 ```
 
-Earlier, we saw how to view our transactions on the Dash block explorer. For operations performed on Dash Platform, there is a separate explorer at [platform-explorer.com](https://platform-explorer.com).
+Earlier, we saw how to view our transactions on the Dash block explorer. For operations performed on Dash Platform, there is a separate explorer at [platform-explorer.com](https://platform-explorer.com) for mainnet and [testnet.platform-explorer.com](https://testnet.platform-explorer.com) for testnet.
 
-- Open the [Identities](https://platform-explorer.com/identities) tab to see your ID on the list.
-- Alternatively, `createIdentity` appends the ID to the URL `https://platform-explorer.com/identity/` and outputs the link to your terminal for convenience.
+- Open the [Identities](https://testnet.platform-explorer.com/identities) tab to see your ID on the list.
+- Alternatively, `createIdentity` appends the ID to the URL `https://testnet.platform-explorer.com/identity/` and outputs the link to your terminal for convenience.
 
 ![04-platform-explorer-identity-endpoint](https://ajc.pics/2024/04/01/first-look-dash/04-platform-explorer-identity-endpoint.webp)
 
-Create a file called `retrieveIdentities.js`.
+Create a file called `03-retrieveIdentities.js`.
 
 ```bash wrap=false
-echo > scripts/retrieveIdentities.js
+echo > scripts/03-retrieveIdentities.js
 ```
 
 `getIdentityIds()` with return your identity ID's which can be passed to `identities.get()`.
 
 ```js wrap=false
-// scripts/retrieveIdentities.js
+// scripts/03-retrieveIdentities.js
 
-import { client } from '../api/client.js'
+import { log, err, client, platform } from '../api/client.js'
 
 async function retrieveIdentities() {
   try {
     const walletAccount = await client.getWalletAccount()
     const identityIds = walletAccount.identities.getIdentityIds()
-    console.log("\nRetrieved Identity IDs:\n" + JSON.stringify(identityIds, null, 2))
+    log("\nRetrieved Identity IDs:\n" + JSON.stringify(identityIds, null, 2))
 
     for (const id of identityIds) {
-      const identity = await client.platform.identities.get(id)
-      console.log(`\nIdentity ID: ${id}`)
-      console.log(`  - Balance: ${identity.balance}`)
+      const identity = await platform.identities.get(id)
+      log(`\nIdentity ID: ${id}`)
+      log(`  - Balance: ${identity.balance} credits`)
     }
   } catch (error) {
-    console.error('Something went wrong:\n', error)
+    err('Something went wrong:\n', error)
   } finally {
     client.disconnect()
   }
@@ -304,18 +330,18 @@ Identity ID: 6vx4nFiHFm7NVWDUFeKPEKxmYBX3heTcUCdgC16jNdpK
 
 When an Identity is created, a special transaction transforms Dash into credits which are used to interact with Dash Platform. 1 DASH is equal to 100,000,000 Duffs (Dash's version of the [Satoshi](https://www.fool.com/terms/s/satoshi/)) and 100 million Duffs is equal to 100 billion credits. Since interacting with Dash Platform applications decreases your credit balance, at a certain point you'll need to topup the balance by converting some Dash to credits.
 
-Create a file called `topUpIdentities.js`.
+Create a file called `04-topUpIdentities.js`.
 
 ```bash wrap=false
-echo > scripts/topUpIdentities.js
+echo > scripts/04-topUpIdentities.js
 ```
 
 `getIdentityIds()` will be used again and the ID's will be passed to `identities.topUp()`.
 
 ```js wrap=false
-// scripts/topUpIdentities.js
+// scripts/04-topUpIdentities.js
 
-import { client } from '../api/client.js'
+import { log, err, client, platform } from '../api/client.js'
 
 async function topUpIdentities() {
   try {
@@ -323,12 +349,16 @@ async function topUpIdentities() {
     const identityIds = walletAccount.identities.getIdentityIds()
 
     for (const id of identityIds) {
-      await client.platform.identities.topUp(id, 100000000)
-      const identity = await client.platform.identities.get(id)
-      console.log(`IDENTITY_CREDIT_BALANCE for ID ${id}: ${identity.balance}`)
+      await platform.identities.topUp(
+        id,
+        10000000
+      )
+
+      const identity = await platform.identities.get(id)
+      log(`IDENTITY_CREDIT_BALANCE for ID ${id}: ${identity.balance}`)
     }
   } catch (error) {
-    console.error('Something went wrong:\n', error)
+    err('Something went wrong:\n', error)
   } finally {
     client.disconnect()
   }
@@ -351,39 +381,40 @@ IDENTITY_CREDIT_BALANCE for ID 6vx4nFiHFm7NVWDUFeKPEKxmYBX3heTcUCdgC16jNdpK: 874
 
 ### Register and Retrieve Name
 
-Create a file called `registerName.js`.
+Create a file called `05-registerName.js`.
 
 ```bash wrap=false
-echo > scripts/registerName.js
+echo > scripts/05-registerName.js
 ```
 
 Create a `LABEL` in `.env` with your desired name. Replace `YOUR-NAME-HERE` with your name. See the [implementation details for naming constraints](https://docs.dash.org/projects/platform/en/stable/docs/explanations/dpns.html#implementation).
 
 ```bash wrap=false
-LABEL="YOUR-NAME-HERE"
-# echo '\nLABEL="YOUR-NAME-HERE"' >> .env
+LABEL="<YOUR-LABEL-HERE>"
 ```
 
-Add the following to `scripts/registerName.js`.
+Add the following to `05-registerName.js`.
 
 ```js wrap=false
-// scripts/registerName.js
+// scripts/05-registerName.js
 
-import { client } from '../api/client.js'
+import { log, err, client, platform } from '../api/client.js'
 
 const { IDENTITY_ID, LABEL } = process.env
 
 async function registerName() {
   try {
-    const identity = await client.platform.identities.get(IDENTITY_ID)
-    const dashUniqueIdentityId = await identity.getId()
-    const nameRegistration = await client.platform.names.register(
-      `${LABEL}.dash`, { dashUniqueIdentityId }, identity
+    const identity = await platform.identities.get(IDENTITY_ID)
+    const nameRegistration = await platform.names.register(
+      `${LABEL}.dash`,
+      { identity: IDENTITY_ID },
+      identity
     )
-    console.log("LABEL=" + JSON.stringify(nameRegistration.toJSON().label))
-    console.log(`\nView on block explorer: https://platform-explorer.com/document/${nameRegistration.toJSON().$id}\n`)
+
+    log("LABEL=" + JSON.stringify(nameRegistration.toJSON().label))
+    log(`\nView on block explorer: https://testnet.platform-explorer.com/document/${nameRegistration.toJSON().$id}\n`)
   } catch (error) {
-    console.error("Something went wrong:\n", error)
+    err("Something went wrong:\n", error)
   } finally {
     client.disconnect()
   }
@@ -404,33 +435,34 @@ Output:
 LABEL="ajcwebdev20240603"
 ```
 
-View on block explorer: [platform-explorer.com/document/Ax2Psritj8p6cjkPfdFiwv3EBzc93Txhfv9mZnkrZi2](https://platform-explorer.com/document/Ax2Psritj8p6cjkPfdFiwv3EBzc93Txhfv9mZnkrZi2)
+View on block explorer: [testnet.platform-explorer.com/document/Ax2Psritj8p6cjkPfdFiwv3EBzc93Txhfv9mZnkrZi2](https://testnet.platform-explorer.com/document/Ax2Psritj8p6cjkPfdFiwv3EBzc93Txhfv9mZnkrZi2)
 
 ![05-platform-explorer-document-endpoint](https://ajc.pics/2024/04/01/first-look-dash/05-platform-explorer-document-endpoint.webp)
 
-Create a file called `retrieveName.js`.
+Create a file called `06-retrieveName.js`.
 
 ```bash wrap=false
-echo > scripts/retrieveName.js
+echo > scripts/06-retrieveName.js
 ```
 
 Pass your name to `platform.names.resolve()`.
 
 ```js wrap=false
-// scripts/retrieveName.js
+// scripts/06-retrieveName.js
 
-import { client } from '../api/client.js'
+import { log, err, client, platform } from '../api/client.js'
 
 const { LABEL } = process.env
 
 async function retrieveName() {
   try {
-    const extendedDoc = await client.platform.names.resolve(`${LABEL}.dash`)
+    const extendedDoc = await platform.names.resolve(`${LABEL}.dash`)
     const name = JSON.parse(JSON.stringify(extendedDoc))
-    console.log(`\nResolved name object:\n\n`, name)
-    console.log(`\nView on block explorer: https://platform-explorer.com/document/${name.$id}\n`)
+
+    log(`\nResolved name object:\n\n`, name)
+    log(`\nView on block explorer: https://testnet.platform-explorer.com/document/${name.$id}\n`)
   } catch (error) {
-    console.error('Something went wrong:\n', error)
+    err('Something went wrong:\n', error)
   } finally {
     client.disconnect()
   }
@@ -457,7 +489,7 @@ Resolved name object:
   parentDomainName: 'dash',
   preorderSalt: 'DP79t5gRhz8GYCVuZ3iCITAbnkcVygeR5ltifmAqDMo=',
   records: {
-    dashUniqueIdentityId: 'WBx62yMsMigHiMpK6gYoaiuZulKGo0gcmv6X+fxv0FA='
+    identityId: 'WBx62yMsMigHiMpK6gYoaiuZulKGo0gcmv6X+fxv0FA='
   },
   subdomainRules: { allowSubdomains: false },
   '$revision': 1,
@@ -493,7 +525,7 @@ Resolved name object:
 }
 ```
 
-View on block explorer: [platform-explorer.com/document/Ax2Psritj8p6cjkPfdFiwv3EBzc93Txhfv9mZnkrZi2](https://platform-explorer.com/document/Ax2Psritj8p6cjkPfdFiwv3EBzc93Txhfv9mZnkrZi2)
+View on block explorer: [testnet.platform-explorer.com/document/Ax2Psritj8p6cjkPfdFiwv3EBzc93Txhfv9mZnkrZi2](https://testnet.platform-explorer.com/document/Ax2Psritj8p6cjkPfdFiwv3EBzc93Txhfv9mZnkrZi2)
 
 ## Data Contracts
 
@@ -507,24 +539,24 @@ You can create Data Contracts through an online user interface at [dashpay.io](h
 
 ### Register, Retrieve, and Update Contract
 
-Create a file called `registerContract.js`.
+Create a file called `07-registerContract.js`.
 
 ```bash wrap=false
-echo > scripts/registerContract.js
+echo > scripts/07-registerContract.js
 ```
 
 `contracts.create()` will take your identity and a spec for the contract. In this case the contract will be a simple string message.
 
 ```js wrap=false
-// scripts/registerContract.js
+// scripts/07-registerContract.js
 
-import { client } from '../api/client.js'
+import { log, err, client, platform } from '../api/client.js'
 
 const { IDENTITY_ID } = process.env
 
 const registerContract = async () => {
   try {
-    const identity = await client.platform.identities.get(IDENTITY_ID)
+    const identity = await platform.identities.get(IDENTITY_ID)
     const contractDocuments = {
       note: {
         type: 'object',
@@ -532,14 +564,21 @@ const registerContract = async () => {
         additionalProperties: false
       }
     }
-    const contract = await client.platform.contracts.create(contractDocuments, identity)
-    console.log("\nCONTRACT_ID=" + `"${contract.toJSON().id}"`)
 
-    await client.platform.contracts.publish(contract, identity)
-    console.log('\nContract registered:\n\n', contract.toJSON())
-    console.log(`\nView on platform block explorer:\n\nhttps://platform-explorer.com/dataContract/${contract.toJSON().id}\n`)
+    const contract = await platform.contracts.create(
+      contractDocuments,
+      identity
+    )
+
+    await platform.contracts.publish(
+      contract,
+      identity
+    )
+    log('\nContract registered:\n\n', JSON.stringify(contract, null, 2))
+    log(`\nView on platform block explorer:\n\nhttps://testnet.platform-explorer.com/dataContract/${contract.toJSON().id}\n`)
+    log("\nCONTRACT_ID=" + `"${contract.toJSON().id}"`)
   } catch (e) {
-    console.error('Something went wrong:\n', e)
+    err('Something went wrong:\n', e)
   } finally {
     client.disconnect()
   }
@@ -554,10 +593,10 @@ Run the `registerContract` script:
 npm run registerContract
 ```
 
-Output:
+***Note: Add the following output to `.env`:***
 
-```js wrap=false
-CONTRACT_ID="4FwqAJwrJsnrxG9BcufeXzJMEoaqq3YASjCezxsUcrso"
+```bash wrap=false
+CONTRACT_ID="H4wBXB2RCu58EP7H7gGyehVmD7ij5MLZkAXW9SVUGPYb"
 ```
 
 Contract registered:
@@ -590,30 +629,31 @@ Contract registered:
 }
 ```
 
-View on platform block explorer: [platform-explorer.com/dataContract/4FwqAJwrJsnrxG9BcufeXzJMEoaqq3YASjCezxsUcrso](https://platform-explorer.com/dataContract/4FwqAJwrJsnrxG9BcufeXzJMEoaqq3YASjCezxsUcrso)
+View on platform block explorer: [testnet.platform-explorer.com/dataContract/4FwqAJwrJsnrxG9BcufeXzJMEoaqq3YASjCezxsUcrso](https://testnet.platform-explorer.com/dataContract/4FwqAJwrJsnrxG9BcufeXzJMEoaqq3YASjCezxsUcrso)
 
-Create a file called `retrieveContract.js`.
+Create a file called `08-retrieveContract.js`.
 
 ```bash wrap=false
-echo > scripts/retrieveContract.js
+echo > scripts/08-retrieveContract.js
 ```
 
 Pass your contract ID to `contracts.get()`.
 
 ```js wrap=false
-// scripts/retrieveContract.js
+// scripts/08-retrieveContract.js
 
-import { client } from '../api/client.js'
+import { log, err, dir, client, platform } from '../api/client.js'
 
 const { CONTRACT_ID } = process.env
 
 const retrieveContract = async () => {
   try {
-    const contract = await client.platform.contracts.get(CONTRACT_ID)
-    console.dir(contract.toJSON(), { depth: 5 })
-    console.log(`\nView on platform block explorer:\n\nhttps://platform-explorer.com/dataContract/${contract.toJSON().id}\n`)
+    const contract = await platform.contracts.get(CONTRACT_ID)
+
+    dir(contract.toJSON(), { depth: 5 })
+    log(`\nView on platform block explorer:\n\nhttps://testnet.platform-explorer.com/dataContract/${contract.toJSON().id}\n`)
   } catch (e) {
-    console.error('Something went wrong:\n', e)
+    err('Something went wrong:\n', e)
   } finally {
     client.disconnect()
   }
@@ -658,40 +698,43 @@ Output:
 }
 ```
 
-View on platform block explorer: [platform-explorer.com/dataContract/4FwqAJwrJsnrxG9BcufeXzJMEoaqq3YASjCezxsUcrso](https://platform-explorer.com/dataContract/4FwqAJwrJsnrxG9BcufeXzJMEoaqq3YASjCezxsUcrso)
+View on platform block explorer: [testnet.platform-explorer.com/dataContract/4FwqAJwrJsnrxG9BcufeXzJMEoaqq3YASjCezxsUcrso](https://testnet.platform-explorer.com/dataContract/4FwqAJwrJsnrxG9BcufeXzJMEoaqq3YASjCezxsUcrso)
 
-Create a file called `updateContract.js`.
+Create a file called `09-updateContract.js`.
 
 ```bash wrap=false
-echo > scripts/updateContract.js
+echo > scripts/09-updateContract.js
 ```
 
 Use your identity ID and contract ID along with `setDocumentSchema()` and `contracts.update()`.
 
 ```js wrap=false
-// scripts/updateContract.js
+// scripts/09-updateContract.js
 
-import { client } from '../api/client.js'
+import { log, err, client, platform } from '../api/client.js'
 
 const { IDENTITY_ID, CONTRACT_ID } = process.env
 
 const updateContract = async () => {
   try {
-    const identity = await client.platform.identities.get(IDENTITY_ID)
-    const existingDataContract = await client.platform.contracts.get(CONTRACT_ID)
-    const documentSchema = existingDataContract.getDocumentSchema('note')
+    const identity = await platform.identities.get(IDENTITY_ID)
+    const originalContract = await platform.contracts.get(CONTRACT_ID)
+    const documentSchema = originalContract.getDocumentSchema('note')
 
     documentSchema.properties.author = {
       type: 'string',
       position: 1
     }
 
-    existingDataContract.setDocumentSchema('note', documentSchema)
+    originalContract.setDocumentSchema(
+      'note',
+      documentSchema
+    )
 
-    await client.platform.contracts.update(existingDataContract, identity)
-    console.log('\nContract updated:\n\n', existingDataContract.toJSON())
+    await platform.contracts.update(originalContract, identity)
+    log('\nContract updated:\n\n', `${JSON.stringify(originalContract, null, 2)}`)
   } catch (e) {
-    console.error('Something went wrong:\n', e)
+    err('Something went wrong:\n', e)
   } finally {
     client.disconnect()
   }
@@ -708,29 +751,38 @@ npm run updateContract
 
 Contract updated:
 
-```js wrap=false
+```json wrap=false
 {
-  '$format_version': '0',
-  id: '4FwqAJwrJsnrxG9BcufeXzJMEoaqq3YASjCezxsUcrso',
-  config: {
-    '$format_version': '0',
-    canBeDeleted: false,
-    readonly: false,
-    keepsHistory: false,
-    documentsKeepHistoryContractDefault: false,
-    documentsMutableContractDefault: true,
-    documentsCanBeDeletedContractDefault: true,
-    requiresIdentityEncryptionBoundedKey: null,
-    requiresIdentityDecryptionBoundedKey: null
+  "$format_version": "0",
+  "id": "H4wBXB2RCu58EP7H7gGyehVmD7ij5MLZkAXW9SVUGPYb",
+  "config": {
+    "$format_version": "0",
+    "canBeDeleted": false,
+    "readonly": false,
+    "keepsHistory": false,
+    "documentsKeepHistoryContractDefault": false,
+    "documentsMutableContractDefault": true,
+    "documentsCanBeDeletedContractDefault": true,
+    "requiresIdentityEncryptionBoundedKey": null,
+    "requiresIdentityDecryptionBoundedKey": null
   },
-  version: 1,
-  ownerId: '6vx4nFiHFm7NVWDUFeKPEKxmYBX3heTcUCdgC16jNdpK',
-  schemaDefs: null,
-  documentSchemas: {
-    note: {
-      type: 'object',
-      properties: [Object],
-      additionalProperties: false
+  "version": 1,
+  "ownerId": "Atx8CpmKMgDvxWXrRfgCJ44GmUSPiB1qXkfoyotttHd",
+  "schemaDefs": null,
+  "documentSchemas": {
+    "note": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "position": 0
+        },
+        "author": {
+          "type": "string",
+          "position": 1
+        }
+      },
+      "additionalProperties": false
     }
   }
 }
@@ -747,6 +799,9 @@ const { NETWORK, MNEMONIC, CONTRACT_ID } = process.env
 
 export const client = new Dash.Client({
   network: NETWORK,
+  // Picking a known good ip address can sometimes help reliability
+  // Uncomment the next line if network is throwing errors
+  // dapiAddresses: ["44.227.137.77:1443"],
   wallet: {
     mnemonic: MNEMONIC,
     unsafeOptions: {
@@ -759,6 +814,13 @@ export const client = new Dash.Client({
     },
   },
 })
+
+export const log = console.log
+export const err = console.error
+export const dir = console.dir
+
+export const platform = client.platform
+export const wallet = client.wallet
 ```
 
 ### Submit and Retrieve Documents
@@ -766,35 +828,40 @@ export const client = new Dash.Client({
 Create a file called `submitNoteDocument.js`.
 
 ```bash wrap=false
-echo > scripts/submitNoteDocument.js
+echo > scripts/10-submitNoteDocument.js
 ```
 
-Add the following to `scripts/submitNoteDocument.js`.
+Add the following to `10-submitNoteDocument.js`.
 
 ```js wrap=false
-// scripts/submitNoteDocument.js
+// scripts/10-submitNoteDocument.js
 
-import { client } from '../api/client.js'
+import { log, err, client, platform } from '../api/client.js'
 
 const { IDENTITY_ID, LABEL } = process.env
 
 const submitNoteDocument = async () => {
   try {
-    const identity = await client.platform.identities.get(IDENTITY_ID)
-    const noteDocument = await client.platform.documents.create(
+    const identity = await platform.identities.get(IDENTITY_ID)
+    const noteDocument = await platform.documents.create(
       'tutorialContract.note',
       identity,
       { message: `Hello from ${LABEL} @ ${new Date().toUTCString()}` },
     )
-    await client.platform.documents.broadcast({
-      create: [noteDocument],
-      replace: [],
-      delete: [],
-    }, identity)
-    console.log(`DOCUMENT_ID="${noteDocument.toJSON().$id}"`)
-    console.log(noteDocument.toJSON())
+
+    await platform.documents.broadcast(
+      {
+        create: [noteDocument],
+        replace: [],
+        delete: [],
+      },
+      identity
+    )
+
+    log(`${JSON.stringify(noteDocument, null, 2)}`)
+    log(`DOCUMENT_ID="${noteDocument.toJSON().$id}"`)
   } catch (e) {
-    console.error('Something went wrong:\n', e)
+    err('Something went wrong:\n', e)
   } finally {
     client.disconnect()
   }
@@ -809,71 +876,93 @@ Run the `submitNoteDocument` script.
 npm run submitNoteDocument
 ```
 
-Output:
+***Note: Add the following to `.env`:***
 
-```js wrap=false
-DOCUMENT_ID="6uxYzLqTumUHGcSRtn8G1PDyeV6bkWiRY3T97T4n7F7M"
+```bash wrap=false
+DOCUMENT_ID="679YJYmZTRMLzmuVv2nvcMieid3WD3J4R29NKiafd3pd"
+```
 
+Note document output:
+
+```json wrap=false
 {
-  '$id': '6uxYzLqTumUHGcSRtn8G1PDyeV6bkWiRY3T97T4n7F7M',
-  '$ownerId': '6vx4nFiHFm7NVWDUFeKPEKxmYBX3heTcUCdgC16jNdpK',
-  message: 'Hello from ajcwebdev @ Mon, 03 Jun 2024 20:21:02 GMT',
-  '$revision': 1,
-  '$createdAt': null,
-  '$updatedAt': null,
-  '$transferredAt': null,
-  '$createdAtBlockHeight': null,
-  '$updatedAtBlockHeight': null,
-  '$transferredAtBlockHeight': null,
-  '$createdAtCoreBlockHeight': null,
-  '$updatedAtCoreBlockHeight': null,
-  '$transferredAtCoreBlockHeight': null,
-  '$dataContract': {
-    '$format_version': '0',
-    id: '4FwqAJwrJsnrxG9BcufeXzJMEoaqq3YASjCezxsUcrso',
-    config: {
-      '$format_version': '0',
-      canBeDeleted: false,
-      readonly: false,
-      keepsHistory: false,
-      documentsKeepHistoryContractDefault: false,
-      documentsMutableContractDefault: true,
-      documentsCanBeDeletedContractDefault: true,
-      requiresIdentityEncryptionBoundedKey: null,
-      requiresIdentityDecryptionBoundedKey: null
+  "$id": "679YJYmZTRMLzmuVv2nvcMieid3WD3J4R29NKiafd3pd",
+  "$ownerId": "Atx8CpmKMgDvxWXrRfgCJ44GmUSPiB1qXkfoyotttHd",
+  "message": "Hello from ajcwebdev20250128 @ Fri, 31 Jan 2025 00:30:52 GMT",
+  "$revision": 1,
+  "$createdAt": null,
+  "$updatedAt": null,
+  "$transferredAt": null,
+  "$createdAtBlockHeight": null,
+  "$updatedAtBlockHeight": null,
+  "$transferredAtBlockHeight": null,
+  "$createdAtCoreBlockHeight": null,
+  "$updatedAtCoreBlockHeight": null,
+  "$transferredAtCoreBlockHeight": null,
+  "$dataContract": {
+    "$format_version": "0",
+    "id": "H4wBXB2RCu58EP7H7gGyehVmD7ij5MLZkAXW9SVUGPYb",
+    "config": {
+      "$format_version": "0",
+      "canBeDeleted": false,
+      "readonly": false,
+      "keepsHistory": false,
+      "documentsKeepHistoryContractDefault": false,
+      "documentsMutableContractDefault": true,
+      "documentsCanBeDeletedContractDefault": true,
+      "requiresIdentityEncryptionBoundedKey": null,
+      "requiresIdentityDecryptionBoundedKey": null
     },
-    version: 2,
-    ownerId: '6vx4nFiHFm7NVWDUFeKPEKxmYBX3heTcUCdgC16jNdpK',
-    schemaDefs: null,
-    documentSchemas: { note: [Object] }
+    "version": 2,
+    "ownerId": "Atx8CpmKMgDvxWXrRfgCJ44GmUSPiB1qXkfoyotttHd",
+    "schemaDefs": null,
+    "documentSchemas": {
+      "note": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "position": 0
+          },
+          "author": {
+            "type": "string",
+            "position": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    }
   },
-  '$type': 'note'
+  "$type": "note"
 }
 ```
 
-Create a file called `getDocuments.js`.
+Create a file called `11-getDocuments.js`.
 
 ```bash wrap=false
-echo > scripts/getDocuments.js
+echo > scripts/11-getDocuments.js
 ```
 
-Add the following to `scripts/getDocuments.js`.
+Add the following to `11-getDocuments.js`.
 
 ```js wrap=false
-// scripts/getDocuments.js
+// scripts/11-getDocuments.js
 
-import { client } from '../api/client.js'
+import { log, err, client, platform } from '../api/client.js'
 
 const getDocuments = async () => {
   try {
-    const documents = await client.platform.documents.get(
+    const documents = await platform.documents.get(
       'tutorialContract.note',
       { limit: 5 }
     )
-    console.log('\nLast 5 messages:\n')
-    documents.forEach(n => console.log(n.toJSON().message))
+    log('\nLast 5 messages:\n')
+
+    documents.forEach(
+      n => log(n.toJSON().message)
+    )
   } catch (e) {
-    console.error('Something went wrong:\n', e)
+    err('Something went wrong:\n', e)
   } finally {
     client.disconnect()
   }
@@ -888,48 +977,53 @@ Run the `getDocuments` script:
 npm run getDocuments
 ```
 
-Output:
+Last 5 messages:
 
 ```txt wrap=false
-Hello from ajcwebdev @ Tue, 09 Apr 2024 08:11:25 GMT
+Hello from ajcwebdev20250128 @ Fri, 31 Jan 2025 00:30:52 GMT
 ```
 
 ### Update and Delete Documents
 
-Create a file called `updateNoteDocument.js`.
+Create a file called `12-updateNoteDocument.js`.
 
 ```bash wrap=false
-echo > scripts/updateNoteDocument.js
+echo > scripts/12-updateNoteDocument.js
 ```
 
-Add the following to `scripts/updateNoteDocument.js`.
+Add the following to `12-updateNoteDocument.js`.
 
 ```js wrap=false
-// scripts/updateNoteDocument.js
+// scripts/12-updateNoteDocument.js
 
-import { client } from '../api/client.js'
+import { log, err, client, platform } from '../api/client.js'
 
 const { IDENTITY_ID, DOCUMENT_ID, LABEL } = process.env
 
 const updateNoteDocument = async () => {
   try {
-    const identity = await client.platform.identities.get(IDENTITY_ID)
+    const identity = await platform.identities.get(IDENTITY_ID)
 
-    const [document] = await client.platform.documents.get(
-      'tutorialContract.note',
-      { where: [['$id', '==', DOCUMENT_ID]] },
-    )
+    const [document] = await platform.documents.get('tutorialContract.note', {
+      where: [[
+        '$id', '==', DOCUMENT_ID
+      ]]
+    })
 
     document.set(
       'message',
       `Hello from ${LABEL} again @ ${new Date().toUTCString()}`
     )
 
-    await client.platform.documents.broadcast({ replace: [document] }, identity)
-    console.log('\nMessage: ', document.toJSON().message)
-    console.log('\nDocument updated:\n\n', document.toJSON())
+    await platform.documents.broadcast(
+      { replace: [document] },
+      identity
+    )
+
+    log('\nMessage: ', document.toJSON().message)
+    log('\nDocument updated:\n\n', `${JSON.stringify(document, null, 2)}`)
   } catch (e) {
-    console.error('Something went wrong:\n', e)
+    err('Something went wrong:\n', e)
   } finally {
     client.disconnect()
   }
@@ -947,77 +1041,98 @@ npm run updateNoteDocument
 Output:
 
 ```txt wrap=false
-Message:  Hello from ajcwebdev again @ Mon, 03 Jun 2024 20:28:29 GMT
+Message:  Hello from ajcwebdev20250128 again @ Fri, 31 Jan 2025 00:35:08 GMT
 ```
 
 Document updated:
 
-```js wrap=false
+```json wrap=false
 {
-  '$id': '6uxYzLqTumUHGcSRtn8G1PDyeV6bkWiRY3T97T4n7F7M',
-  '$ownerId': '6vx4nFiHFm7NVWDUFeKPEKxmYBX3heTcUCdgC16jNdpK',
-  message: 'Hello from ajcwebdev again @ Mon, 03 Jun 2024 20:28:29 GMT',
-  '$revision': 1,
-  '$createdAt': null,
-  '$updatedAt': null,
-  '$transferredAt': null,
-  '$createdAtBlockHeight': null,
-  '$updatedAtBlockHeight': null,
-  '$transferredAtBlockHeight': null,
-  '$createdAtCoreBlockHeight': null,
-  '$updatedAtCoreBlockHeight': null,
-  '$transferredAtCoreBlockHeight': null,
-  '$dataContract': {
-    '$format_version': '0',
-    id: '4FwqAJwrJsnrxG9BcufeXzJMEoaqq3YASjCezxsUcrso',
-    config: {
-      '$format_version': '0',
-      canBeDeleted: false,
-      readonly: false,
-      keepsHistory: false,
-      documentsKeepHistoryContractDefault: false,
-      documentsMutableContractDefault: true,
-      documentsCanBeDeletedContractDefault: true,
-      requiresIdentityEncryptionBoundedKey: null,
-      requiresIdentityDecryptionBoundedKey: null
+  "$id": "679YJYmZTRMLzmuVv2nvcMieid3WD3J4R29NKiafd3pd",
+  "$ownerId": "Atx8CpmKMgDvxWXrRfgCJ44GmUSPiB1qXkfoyotttHd",
+  "message": "Hello from ajcwebdev20250128 again @ Fri, 31 Jan 2025 00:35:08 GMT",
+  "$revision": 1,
+  "$createdAt": null,
+  "$updatedAt": null,
+  "$transferredAt": null,
+  "$createdAtBlockHeight": null,
+  "$updatedAtBlockHeight": null,
+  "$transferredAtBlockHeight": null,
+  "$createdAtCoreBlockHeight": null,
+  "$updatedAtCoreBlockHeight": null,
+  "$transferredAtCoreBlockHeight": null,
+  "$dataContract": {
+    "$format_version": "0",
+    "id": "H4wBXB2RCu58EP7H7gGyehVmD7ij5MLZkAXW9SVUGPYb",
+    "config": {
+      "$format_version": "0",
+      "canBeDeleted": false,
+      "readonly": false,
+      "keepsHistory": false,
+      "documentsKeepHistoryContractDefault": false,
+      "documentsMutableContractDefault": true,
+      "documentsCanBeDeletedContractDefault": true,
+      "requiresIdentityEncryptionBoundedKey": null,
+      "requiresIdentityDecryptionBoundedKey": null
     },
-    version: 3,
-    ownerId: '6vx4nFiHFm7NVWDUFeKPEKxmYBX3heTcUCdgC16jNdpK',
-    schemaDefs: null,
-    documentSchemas: { note: [Object] }
+    "version": 2,
+    "ownerId": "Atx8CpmKMgDvxWXrRfgCJ44GmUSPiB1qXkfoyotttHd",
+    "schemaDefs": null,
+    "documentSchemas": {
+      "note": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "position": 0
+          },
+          "author": {
+            "type": "string",
+            "position": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    }
   },
-  '$type': 'note'
+  "$type": "note"
 }
 ```
 
-Now that we can create, read, and update our notes, all we have left to do is delete our notes. Create a file called `deleteNoteDocument.js`.
+Now that we can create, read, and update our notes, all we have left to do is delete our notes. Create a file called `13-deleteNoteDocument.js`.
 
 ```bash wrap=false
-echo > scripts/deleteNoteDocument.js
+echo > scripts/13-deleteNoteDocument.js
 ```
 
-Add the following to `scripts/deleteNoteDocument.js`.
+Add the following to `13-deleteNoteDocument.js`.
 
 ```js wrap=false
-// scripts/deleteNoteDocument.js
+// scripts/13-deleteNoteDocument.js
 
-import { client } from '../api/client.js'
+import { log, err, client, platform } from '../api/client.js'
 
 const { IDENTITY_ID, DOCUMENT_ID } = process.env
 
 const deleteNoteDocument = async () => {
   try {
-    const identity = await client.platform.identities.get(IDENTITY_ID)
+    const identity = await platform.identities.get(IDENTITY_ID)
 
-    const [document] = await client.platform.documents.get(
-      'tutorialContract.note',
-      { where: [['$id', '==', DOCUMENT_ID]] },
+    const [document] = await platform.documents.get('tutorialContract.note', {
+      where: [[
+        '$id', '==', DOCUMENT_ID
+      ]]
+    })
+
+    await platform.documents.broadcast(
+      { delete: [document] },
+      identity
     )
 
-    await client.platform.documents.broadcast({ delete: [document] }, identity)
-    console.log('Document deleted:\n', document.toJSON())
+    log('Document deleted:\n', document.toJSON())
+    log('Document deleted:\n', `${JSON.stringify(document, null, 2)}`)
   } catch (e) {
-    console.error('Something went wrong:\n', e)
+    err('Something went wrong:\n', e)
   } finally {
     client.disconnect()
   }
@@ -1034,41 +1149,56 @@ npm run deleteNoteDocument
 
 Document deleted:
 
-```js wrap=false
+```json wrap=false
 {
-  '$id': '6uxYzLqTumUHGcSRtn8G1PDyeV6bkWiRY3T97T4n7F7M',
-  '$ownerId': '6vx4nFiHFm7NVWDUFeKPEKxmYBX3heTcUCdgC16jNdpK',
-  message: 'Hello from ajcwebdev again @ Mon, 03 Jun 2024 20:28:29 GMT',
-  '$revision': 2,
-  '$createdAt': null,
-  '$updatedAt': null,
-  '$transferredAt': null,
-  '$createdAtBlockHeight': null,
-  '$updatedAtBlockHeight': null,
-  '$transferredAtBlockHeight': null,
-  '$createdAtCoreBlockHeight': null,
-  '$updatedAtCoreBlockHeight': null,
-  '$transferredAtCoreBlockHeight': null,
-  '$dataContract': {
-    '$format_version': '0',
-    id: '4FwqAJwrJsnrxG9BcufeXzJMEoaqq3YASjCezxsUcrso',
-    config: {
-      '$format_version': '0',
-      canBeDeleted: false,
-      readonly: false,
-      keepsHistory: false,
-      documentsKeepHistoryContractDefault: false,
-      documentsMutableContractDefault: true,
-      documentsCanBeDeletedContractDefault: true,
-      requiresIdentityEncryptionBoundedKey: null,
-      requiresIdentityDecryptionBoundedKey: null
+  "$id": "679YJYmZTRMLzmuVv2nvcMieid3WD3J4R29NKiafd3pd",
+  "$ownerId": "Atx8CpmKMgDvxWXrRfgCJ44GmUSPiB1qXkfoyotttHd",
+  "message": "Hello from ajcwebdev20250128 again @ Fri, 31 Jan 2025 00:35:08 GMT",
+  "$revision": 2,
+  "$createdAt": null,
+  "$updatedAt": null,
+  "$transferredAt": null,
+  "$createdAtBlockHeight": null,
+  "$updatedAtBlockHeight": null,
+  "$transferredAtBlockHeight": null,
+  "$createdAtCoreBlockHeight": null,
+  "$updatedAtCoreBlockHeight": null,
+  "$transferredAtCoreBlockHeight": null,
+  "$dataContract": {
+    "$format_version": "0",
+    "id": "H4wBXB2RCu58EP7H7gGyehVmD7ij5MLZkAXW9SVUGPYb",
+    "config": {
+      "$format_version": "0",
+      "canBeDeleted": false,
+      "readonly": false,
+      "keepsHistory": false,
+      "documentsKeepHistoryContractDefault": false,
+      "documentsMutableContractDefault": true,
+      "documentsCanBeDeletedContractDefault": true,
+      "requiresIdentityEncryptionBoundedKey": null,
+      "requiresIdentityDecryptionBoundedKey": null
     },
-    version: 3,
-    ownerId: '6vx4nFiHFm7NVWDUFeKPEKxmYBX3heTcUCdgC16jNdpK',
-    schemaDefs: null,
-    documentSchemas: { note: [Object] }
+    "version": 2,
+    "ownerId": "Atx8CpmKMgDvxWXrRfgCJ44GmUSPiB1qXkfoyotttHd",
+    "schemaDefs": null,
+    "documentSchemas": {
+      "note": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "position": 0
+          },
+          "author": {
+            "type": "string",
+            "position": 1
+          }
+        },
+        "additionalProperties": false
+      }
+    }
   },
-  '$type': 'note'
+  "$type": "note"
 }
 ```
 
@@ -1088,7 +1218,7 @@ Create a `/name` endpoint that will take an identity name:
 
 import express from 'express'
 import cors from 'cors'
-import { client } from './client.js'
+import { log, err, client, platform } from './client.js'
 
 const app = express()
 app.use(cors())
@@ -1096,14 +1226,15 @@ app.use(cors())
 app.get('/name/:identityName', async (req, res) => {
   try {
     const name = req.params.identityName
-    const result = await client.platform.names.resolve(`${name}.dash`)
+    const result = await platform.names.resolve(`${name}.dash`)
+
     if (result !== null) {
       res.json(result.toJSON())
     } else {
       res.status(404).send(`No identity found with the name: ${name}.dash`)
     }
   } catch (error) {
-    console.error(error)
+    err(error)
     res.status(500).send('Something went wrong:\n' + error)
   }
 })
@@ -1111,11 +1242,11 @@ app.get('/name/:identityName', async (req, res) => {
 const port = process.env.PORT || 3001
 
 app.listen(port, () => {
-  console.log("Running on localhost:", port)
+  log("Running on localhost:", port)
 })
 
 process.on('SIGINT', async () => {
-  console.log('Disconnecting Dash client...')
+  log('Disconnecting Dash client...')
   await client.disconnect()
   process.exit(0)
 })
@@ -1127,10 +1258,10 @@ Start the server with the following command:
 npm run express
 ```
 
-Open `localhost:3001/name/YOUR-NAME-HERE` or send a GET request with curl.
+Open `localhost:3001/name/<LABEL>` (with your label instead of `<LABEL>`) or send a GET request with curl.
 
 ```bash wrap=false
-curl "http://localhost:3001/name/YOUR-NAME-HERE" -s | json_pp
+curl "http://localhost:3001/name/<LABEL>" -s | json_pp
 ```
 
 ## Create Next App
@@ -1141,11 +1272,16 @@ Now we'll add a frontend and use Next.js to build a React based UI.
 npx create-next-app@latest next
 ```
 
-Select Yes for using the `src` directory and also for using the App Router.
+Select the following for configuration:
 
 ```txt wrap=false
-✔ Would you like to use `src/` directory? … Yes
+✔ Would you like to use TypeScript? … No
+✔ Would you like to use ESLint? … No
+✔ Would you like to use Tailwind CSS? … Yes
+✔ Would you like your code inside a `src/` directory? … Yes
 ✔ Would you like to use App Router? (recommended) … Yes
+✔ Would you like to use Turbopack for `next dev`? … Yes
+✔ Would you like to customize the import alias (`@/*` by default)? … No
 ```
 
 Open `page.js` in `next/src/app` and include the following code:
